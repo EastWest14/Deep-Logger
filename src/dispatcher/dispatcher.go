@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+type DispatcherLog struct {
+	dispatcherConfig
+}
+
 type Event interface {
 	InputHandlerCode() string
 	EventMessage() string
