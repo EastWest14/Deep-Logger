@@ -4,6 +4,22 @@ import (
 	"testing"
 )
 
+func TestConfigSetName(t *testing.T) {
+	dc := dispatcherConfig{}
+	dc.SetName("ABC")
+	if dc.name != "ABC" {
+		t.Error("DispatchConfig name not setting correctly.")
+	}
+}
+
+func TestConfigName(t *testing.T) {
+	dc := dispatcherConfig{}
+	dc.name = "ABC"
+	if dc.Name() != "ABC" {
+		t.Error("DispatchConfig name not being read correctly.")
+	}
+}
+
 func TestConfigSetIsOn(t *testing.T) {
 	dc := dispatcherConfig{}
 	dc.isOn = false
@@ -29,3 +45,5 @@ func TestIsOn(t *testing.T) {
 		t.Error("DispatchConfig read method returns off, should be on.")
 	}
 }
+
+//TODO: write tests for checking internal consistency
