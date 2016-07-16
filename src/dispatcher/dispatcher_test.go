@@ -7,7 +7,7 @@ import (
 
 func TestCheckEventValidity(t *testing.T) {
 	cases := []struct {
-		inputCode string
+		inputCode InputHandlerCode
 		message   string
 		valid     bool
 	}{
@@ -31,13 +31,13 @@ func TestCheckEventValidity(t *testing.T) {
 }
 
 type EventDummy struct {
-	inputHandlerCode string
+	inputHandlerCode InputHandlerCode
 	message          string
 	time             time.Time
 	evType           int
 }
 
-func (evD *EventDummy) InputHandlerCode() string {
+func (evD *EventDummy) InputHandlerCode() InputHandlerCode {
 	return evD.inputHandlerCode
 }
 

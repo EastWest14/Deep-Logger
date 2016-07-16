@@ -3,9 +3,9 @@ package dispatcher
 type dispatcherConfig struct {
 	name           string
 	isOn           bool
-	inputHandlers  []InputHandler  //TODO: provide access methods
-	OutputHandlers []OutputHandler //TODO: provide access methods
-	dispatchRules  []DispatchRule  //TODO: provide access methods
+	inputHandlers  []InputHandlerCode     //TODO: provide access methods
+	OutputHandlers []OutputHandlerElement //TODO: provide access methods
+	dispatchRules  []DispatchRule         //TODO: provide access methods
 	//TODO: ShouldPanicOnInvalidInput
 }
 
@@ -47,8 +47,11 @@ func (dc *dispatcherConfig) checkConfigStateConsistency() bool {
 	return true //TODO: write real method
 }
 
-type InputHandler int //TODO: temporaily int
+type OutputHandlerCode string //TODO: temporarily int
 
-type OutputHandler int //TODO: temporarily int
+type OutputHandlerElement struct {
+	code        OutputHandlerCode
+	eventOutput func(Event)
+}
 
 type DispatchRule int //TODO: temporarily int
