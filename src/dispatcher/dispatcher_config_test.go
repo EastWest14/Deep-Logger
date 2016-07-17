@@ -10,7 +10,10 @@ func TestConfigUnmarshal(t *testing.T) {
 	"isOn": true,
 	"inputHandlers": ["ABC", "XYZ"],
 	"outputHandlers": ["WOW", "LOL"],
-	"dispatchRules": 5}
+	"dispatchRules": [
+		{"input":"ABC", "output": "QQQ", "intersect": false},
+		{"input":"AAA", "output": "LLL", "intersect": true}
+	]}
 	`
 	dc := LoadConfigFromFile(caseZero)
 	if dc.Name() != "LALALA" {
@@ -60,6 +63,19 @@ func TestConfigUnmarshal(t *testing.T) {
 	if valid == false {
 		t.Error("DispatchConfig output codes read incorrectly from JSON.")
 	}
+
+	//Dispatch rules Unmarshal test
+	if len(dc.dispatchRules) != 2 {
+		t.Error("DispatchConfig number of rules is off.")
+	}
+	ruleZero := dc.dispatchRules[0]
+	if string(ruleZero.Input) != "ABC" || string(ruleZero.Output.code) != "QQQ" || ruleZero.Intersect != false {
+		t.Error("Rule zero read incorrectly.")
+	}
+	ruleOne := dc.dispatchRules[1]
+	if string(ruleOne.Input) != "AAA" || string(ruleOne.Output.code) != "LLL" || ruleOne.Intersect != true {
+		t.Error("Rule one read incorrectly.")
+	}
 }
 
 func TestConfigSetName(t *testing.T) {
@@ -105,3 +121,10 @@ func TestIsOn(t *testing.T) {
 }
 
 //TODO: write tests for checking internal consistency
+
+func TestNewDispatchRule(t *testing.T) {
+	dr := NewDispatchRule("ALL", "AAA", true)
+	if string(dr.Input) != "ALL" || string(dr.Output.code) != "AAA" || dr.Intersect != true {
+		t.Error("NewDispatchRule sets rule incorrectly.")
+	}
+}

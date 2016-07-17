@@ -44,12 +44,25 @@ func LoadConfigFromFile(jsonStr string) *dispatcherConfig {
 		dc.outputHandlers = append(dc.outputHandlers, OutputHandlerElement{OutputHandlerCode(stringCode), nil})
 	}
 
-	var dispatchRules []interface{}
-	for _, dispRule := range dispatchRules {
-		dRule := dispRule.(int)
-		dc.dispatchRules = append(dc.dispatchRules, DispatchRule(dRule)) //TODO: modify type
-	}
+	dc.dispatchRules = loadDispatchRules(dat)
+
 	return &dc
+}
+
+func loadDispatchRules(dat map[string]interface{}) []DispatchRule {
+	var dispatchRules []DispatchRule
+
+	var dispatchRulesData []interface{}
+	dispatchRulesData = dat["dispatchRules"].([]interface{})
+	for _, dispRule := range dispatchRulesData {
+		dRule := dispRule.(map[string]interface{})
+		input := dRule["input"].(string)
+		output := dRule["output"].(string)
+		intersect := dRule["intersect"].(bool)
+
+		dispatchRules = append(dispatchRules, *NewDispatchRule(InputHandlerCode(input), OutputHandlerCode(output), intersect))
+	}
+	return dispatchRules
 }
 
 func (dc *dispatcherConfig) SetName(newName string) {
@@ -94,4 +107,13 @@ type OutputHandlerElement struct {
 	eventOutput func(Event)
 }
 
-type DispatchRule int //TODO: temporarily int
+type DispatchRule struct {
+	Input     InputHandlerCode
+	Output    OutputHandlerElement
+	Intersect bool
+}
+
+//Input is input handler code or "ALL"
+func NewDispatchRule(input InputHandlerCode, output OutputHandlerCode, intersect bool) *DispatchRule {
+	return &DispatchRule{Input: input, Output: OutputHandlerElement{output, nil}, Intersect: intersect}
+}
