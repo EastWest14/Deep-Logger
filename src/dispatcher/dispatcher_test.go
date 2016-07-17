@@ -52,3 +52,28 @@ func (evD *EventDummy) EventTime() time.Time {
 func (evD *EventDummy) EventType() int {
 	return evD.evType
 }
+
+var sampleJSON = `
+	{"name": "LALALA",
+	"isOn": true,
+	"inputHandlers": ["ABC", "XYZ"],
+	"outputHandlers": ["WOW", "LOL"],
+	"dispatchRules": [
+		{"input":"ABC", "output": "WOW", "intersect": false},
+		{"input":"XYZ", "output": "LOL", "intersect": true}
+	]}
+	`
+
+func TestRouteEvent(t *testing.T) {
+	dl := DispatcherLog{*LoadConfigFromFile(sampleJSON)}
+	ev := EventDummy{inputHandlerCode: "ABC", message: ""}
+	outputHandlerEl := dl.routeEvent(&ev)
+	if string(outputHandlerEl.code) != "WOW" {
+		t.Error("Event routed incorrectly.")
+	}
+	ev.inputHandlerCode = InputHandlerCode("XYZ")
+	outputHandlerEl = dl.routeEvent(&ev)
+	if string(outputHandlerEl.code) != "LOL" {
+		t.Error("Event routed incorrectly.")
+	}
+}
