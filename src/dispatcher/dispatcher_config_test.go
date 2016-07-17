@@ -4,6 +4,64 @@ import (
 	"testing"
 )
 
+func TestConfigUnmarshal(t *testing.T) {
+	caseZero := `
+	{"name": "LALALA",
+	"isOn": true,
+	"inputHandlers": ["ABC", "XYZ"],
+	"outputHandlers": ["WOW", "LOL"],
+	"dispatchRules": 5}
+	`
+	dc := LoadConfigFromFile(caseZero)
+	if dc.Name() != "LALALA" {
+		t.Error("DispatchConfig name not being read from JSON correctly.")
+	}
+	if dc.isOn != true {
+		t.Error("DispatchConfig off, but JSON specifies on.")
+	}
+	//Input handlers Unmarshal test
+	if len(dc.inputHandlers) != 2 {
+		t.Error("DispatchConfig number of input codes read is off.")
+		return
+	}
+	valid := true
+	if dc.inputHandlers[0] == "ABC" {
+		if dc.inputHandlers[1] != "XYZ" {
+			valid = false
+		}
+	} else if dc.inputHandlers[0] == "XYZ" {
+		if dc.inputHandlers[1] != "ABC" {
+			valid = false
+		}
+	} else {
+		valid = false
+	}
+	if valid == false {
+		t.Error("DispatchConfig input codes read incorrectly from JSON.")
+	}
+
+	//Output handlers Unmarshal test
+	if len(dc.outputHandlers) != 2 {
+		t.Error("DispatchConfig number of output codes read is off.")
+		return
+	}
+	valid = true
+	if dc.outputHandlers[0].code == "WOW" {
+		if dc.outputHandlers[1].code != "LOL" {
+			valid = false
+		}
+	} else if dc.outputHandlers[0].code == "LOL" {
+		if dc.outputHandlers[1].code != "WOW" {
+			valid = false
+		}
+	} else {
+		valid = false
+	}
+	if valid == false {
+		t.Error("DispatchConfig output codes read incorrectly from JSON.")
+	}
+}
+
 func TestConfigSetName(t *testing.T) {
 	dc := dispatcherConfig{}
 	dc.SetName("ABC")
