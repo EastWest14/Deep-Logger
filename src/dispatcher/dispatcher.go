@@ -15,6 +15,25 @@ type Event interface {
 	EventType() int //TODO: will be an enumeration
 }
 
+func (dl *DispatcherLog) InputEvent(ev Event) {
+
+}
+
+func (dl *DispatcherLog) matchOutputHandler(ev Event) (ok bool, outputH OutputHandlerCode) {
+	//TODO: begin
+	//TODO: defer end
+	if !checkEventValidity(ev) {
+		panic("event is invalid!")
+	}
+	if !dl.isOn {
+		ok = false //TODO: is this right?
+		outputH = OutputHandlerCode("")
+		return
+	}
+	outputE := dl.routeEvent(ev)
+	return true, outputE.code
+}
+
 func checkEventValidity(event Event) bool {
 	return checkInputCodeValidity(event.InputHandlerCode())
 }

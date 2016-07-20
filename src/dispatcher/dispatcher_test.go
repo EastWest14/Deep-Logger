@@ -5,6 +5,26 @@ import (
 	"time"
 )
 
+var sampleJSON = `
+	{"name": "LALALA",
+	"isOn": true,
+	"inputHandlers": ["ABC", "XYZ"],
+	"outputHandlers": ["WOW", "LOL"],
+	"dispatchRules": [
+		{"input":"ABC", "output": "WOW", "intersect": false},
+		{"input":"XYZ", "output": "LOL", "intersect": true}
+	]}
+	`
+
+func TestMatchOutputHandler(t *testing.T) {
+	dl := DispatcherLog{*LoadConfigFromFile(sampleJSON)}
+	ev := &EventDummy{inputHandlerCode: "ABC", message: ""}
+	ok, outputH := dl.matchOutputHandler(ev)
+	if !ok || string(outputH) != "WOW" {
+		t.Error("Event routed incorrectly")
+	}
+}
+
 func TestCheckEventValidity(t *testing.T) {
 	cases := []struct {
 		inputCode InputHandlerCode
@@ -52,17 +72,6 @@ func (evD *EventDummy) EventTime() time.Time {
 func (evD *EventDummy) EventType() int {
 	return evD.evType
 }
-
-var sampleJSON = `
-	{"name": "LALALA",
-	"isOn": true,
-	"inputHandlers": ["ABC", "XYZ"],
-	"outputHandlers": ["WOW", "LOL"],
-	"dispatchRules": [
-		{"input":"ABC", "output": "WOW", "intersect": false},
-		{"input":"XYZ", "output": "LOL", "intersect": true}
-	]}
-	`
 
 func TestRouteEvent(t *testing.T) {
 	dl := DispatcherLog{*LoadConfigFromFile(sampleJSON)}
