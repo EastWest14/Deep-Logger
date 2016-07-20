@@ -16,12 +16,21 @@ var sampleJSON = `
 	]}
 	`
 
+func TestInputEvent(t *testing.T) {
+	dl := DispatcherLog{*LoadConfigFromFile(sampleJSON)}
+	ev := &EventDummy{inputHandlerCode: "ABC", message: ""}
+	outputH := dl.InputEvent(ev)
+	if string(outputH) != "" { //TODO: will be "WOW"
+		t.Error("Event routed to wrong output.")
+	}
+}
+
 func TestMatchOutputHandler(t *testing.T) {
 	dl := DispatcherLog{*LoadConfigFromFile(sampleJSON)}
 	ev := &EventDummy{inputHandlerCode: "ABC", message: ""}
 	ok, outputH := dl.matchOutputHandler(ev)
-	if !ok || string(outputH) != "WOW" {
-		t.Error("Event routed incorrectly")
+	if !ok || string(outputH.code) != "WOW" {
+		t.Error("Event routed incorrectly.")
 	}
 }
 

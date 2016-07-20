@@ -15,11 +15,16 @@ type Event interface {
 	EventType() int //TODO: will be an enumeration
 }
 
-func (dl *DispatcherLog) InputEvent(ev Event) {
-
+func (dl *DispatcherLog) InputEvent(ev Event) OutputHandlerCode { //TODO: will return nothing
+	ok, outputE := dl.matchOutputHandler(ev)
+	if ok && outputE.eventOutput != nil {
+		return OutputHandlerCode(outputE.code)
+	} else {
+		return OutputHandlerCode("")
+	}
 }
 
-func (dl *DispatcherLog) matchOutputHandler(ev Event) (ok bool, outputH OutputHandlerCode) {
+func (dl *DispatcherLog) matchOutputHandler(ev Event) (ok bool, outputH OutputHandlerElement) {
 	//TODO: begin
 	//TODO: defer end
 	if !checkEventValidity(ev) {
@@ -27,11 +32,10 @@ func (dl *DispatcherLog) matchOutputHandler(ev Event) (ok bool, outputH OutputHa
 	}
 	if !dl.isOn {
 		ok = false //TODO: is this right?
-		outputH = OutputHandlerCode("")
+		outputH = OutputHandlerElement{OutputHandlerCode(""), nil}
 		return
 	}
-	outputE := dl.routeEvent(ev)
-	return true, outputE.code
+	return true, *dl.routeEvent(ev)
 }
 
 func checkEventValidity(event Event) bool {
