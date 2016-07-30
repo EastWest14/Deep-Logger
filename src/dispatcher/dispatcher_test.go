@@ -16,15 +16,25 @@ var sampleJSON = `
 	]}
 	`
 
-//TODO: Implement real test!!!
-/*func TestInputEvent(t *testing.T) {
+func TestInputEvent(t *testing.T) {
 	dl := DispatcherLog{*LoadConfig(sampleJSON)}
-	ev := &EventDummy{inputHandlerCode: "ABC", message: ""}
-	outputH := dl.InputEvent(ev)
-	if string(outputH) != "" { //TODO: will be "WOW"
-		t.Error("Event routed to wrong output.")
+
+	v := false
+	dummyF := func(ev Event) {
+		v = true
+		return
 	}
-}*/
+	err := dl.RegisterOutputHandler(OutputHandlerCode("LOL"), dummyF)
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	ev := &EventDummy{inputHandlerCode: "XYZ", message: ""}
+	dl.InputEvent(ev)
+	if v != true {
+		t.Error("Event routed incorrectly.")
+	}
+}
 
 func TestMatchOutputHandler(t *testing.T) {
 	dl := DispatcherLog{*LoadConfig(sampleJSON)}
@@ -109,7 +119,6 @@ func TestRegisterOutputHandler(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	dl.outputHandlers[1].eventOutput = dummyF
 
 	evD := EventDummy{inputHandlerCode: InputHandlerCode("XYZ"), message: ""}
 	dl.InputEvent(&evD)

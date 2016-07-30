@@ -2,7 +2,6 @@ package dispatcher
 
 import (
 	"errors"
-	"fmt"
 	"time"
 )
 
@@ -22,7 +21,7 @@ func (dl *DispatcherLog) InputEvent(ev Event) {
 	ok, outputEFromRule := dl.matchOutputHandler(ev)
 	for _, outputEl := range dl.outputHandlers {
 		if outputEl.code == outputEFromRule.code {
-			outputE = outputEl
+			outputE = *outputEl
 		}
 	}
 
@@ -82,12 +81,11 @@ func (rule *DispatchRule) ruleMatch(ev Event) (matches, intersects bool) {
 //TODO: add locking.
 func (dl *DispatcherLog) RegisterOutputHandler(outputHC OutputHandlerCode, handlerFunc func(Event)) error {
 	for _, outputHE := range dl.outputHandlers {
-		fmt.Println(string(outputHE.code))
-		//fmt.Println("___:" + string(outputHC))
-		if outputHC == outputHE.code {
+		if outputHE.code == outputHC {
 			outputHE.eventOutput = handlerFunc
 			return nil
 		}
+
 	}
 	return errors.New("Failed to register output handler.")
 }

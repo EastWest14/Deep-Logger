@@ -9,9 +9,9 @@ import (
 type dispatcherConfig struct {
 	name           string
 	isOn           bool
-	inputHandlers  []InputHandlerCode     //TODO: provide access methods
-	outputHandlers []OutputHandlerElement //TODO: provide access methods
-	dispatchRules  []DispatchRule         //TODO: provide access methods
+	inputHandlers  []InputHandlerCode      //TODO: provide access methods
+	outputHandlers []*OutputHandlerElement //TODO: provide access methods
+	dispatchRules  []DispatchRule          //TODO: provide access methods
 	//TODO: ShouldPanicOnInvalidInput
 }
 
@@ -50,7 +50,7 @@ func LoadConfig(jsonStr string) *dispatcherConfig {
 	for _, outCode := range outCodes {
 		//TODO: check validity
 		stringCode := outCode.(string)
-		dc.outputHandlers = append(dc.outputHandlers, OutputHandlerElement{OutputHandlerCode(stringCode), nil})
+		dc.outputHandlers = append(dc.outputHandlers, &OutputHandlerElement{OutputHandlerCode(stringCode), nil})
 	}
 
 	dc.dispatchRules = loadDispatchRules(dat)
