@@ -3,6 +3,7 @@ package dispatcher
 import (
 	"encoding/json"
 	"log"
+	"io/ioutil"
 )
 
 type dispatcherConfig struct {
@@ -17,8 +18,16 @@ type dispatcherConfig struct {
 //TODO: locks on reads.
 //TODO: locks on writes.
 
-//TODO: replace argument to filepath
-func LoadConfigFromFile(jsonStr string) *dispatcherConfig {
+func ConfigFromFile(filename string) *dispatcherConfig {
+	rawContent, err := ioutil.ReadFile(filename)
+	if err != nil {
+		panic("Failed to load config.") //TODO: Don't panic here, return error
+	}
+
+	return LoadConfig(string(rawContent))
+}
+
+func LoadConfig(jsonStr string) *dispatcherConfig {
 	dc := dispatcherConfig{}
 
 	var dat map[string]interface{}

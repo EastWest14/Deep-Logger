@@ -4,7 +4,14 @@ import (
 	"testing"
 )
 
-func TestConfigUnmarshal(t *testing.T) {
+func TestConfigFromFile(t *testing.T) {
+	dc := ConfigFromFile("../../config/little_config.json")
+	if dc == nil {
+		t.Error("Failed loading config from file.")
+	}
+}
+
+func TestLoadConfig(t *testing.T) {
 	caseZero := `
 	{"name": "LALALA",
 	"isOn": true,
@@ -15,7 +22,7 @@ func TestConfigUnmarshal(t *testing.T) {
 		{"input":"AAA", "output": "LLL", "intersect": true}
 	]}
 	`
-	dc := LoadConfigFromFile(caseZero)
+	dc := LoadConfig(caseZero)
 	if dc.Name() != "LALALA" {
 		t.Error("DispatchConfig name not being read from JSON correctly.")
 	}

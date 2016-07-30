@@ -17,7 +17,7 @@ var sampleJSON = `
 	`
 
 func TestInputEvent(t *testing.T) {
-	dl := DispatcherLog{*LoadConfigFromFile(sampleJSON)}
+	dl := DispatcherLog{*LoadConfig(sampleJSON)}
 	ev := &EventDummy{inputHandlerCode: "ABC", message: ""}
 	outputH := dl.InputEvent(ev)
 	if string(outputH) != "" { //TODO: will be "WOW"
@@ -26,7 +26,7 @@ func TestInputEvent(t *testing.T) {
 }
 
 func TestMatchOutputHandler(t *testing.T) {
-	dl := DispatcherLog{*LoadConfigFromFile(sampleJSON)}
+	dl := DispatcherLog{*LoadConfig(sampleJSON)}
 	ev := &EventDummy{inputHandlerCode: "ABC", message: ""}
 	ok, outputH := dl.matchOutputHandler(ev)
 	if !ok || string(outputH.code) != "WOW" {
@@ -83,7 +83,7 @@ func (evD *EventDummy) EventType() int {
 }
 
 func TestRouteEvent(t *testing.T) {
-	dl := DispatcherLog{*LoadConfigFromFile(sampleJSON)}
+	dl := DispatcherLog{*LoadConfig(sampleJSON)}
 	ev := EventDummy{inputHandlerCode: "ABC", message: ""}
 	outputHandlerEl := dl.routeEvent(&ev)
 	if string(outputHandlerEl.code) != "WOW" {
