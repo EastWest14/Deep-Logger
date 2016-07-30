@@ -2,8 +2,8 @@ package dispatcher
 
 import (
 	"encoding/json"
-	"log"
 	"io/ioutil"
+	"log"
 )
 
 type dispatcherConfig struct {

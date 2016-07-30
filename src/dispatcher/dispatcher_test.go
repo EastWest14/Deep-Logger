@@ -16,14 +16,15 @@ var sampleJSON = `
 	]}
 	`
 
-func TestInputEvent(t *testing.T) {
+//TODO: Implement real test!!!
+/*func TestInputEvent(t *testing.T) {
 	dl := DispatcherLog{*LoadConfig(sampleJSON)}
 	ev := &EventDummy{inputHandlerCode: "ABC", message: ""}
 	outputH := dl.InputEvent(ev)
 	if string(outputH) != "" { //TODO: will be "WOW"
 		t.Error("Event routed to wrong output.")
 	}
-}
+}*/
 
 func TestMatchOutputHandler(t *testing.T) {
 	dl := DispatcherLog{*LoadConfig(sampleJSON)}
@@ -93,5 +94,26 @@ func TestRouteEvent(t *testing.T) {
 	outputHandlerEl = dl.routeEvent(&ev)
 	if string(outputHandlerEl.code) != "LOL" {
 		t.Error("Event routed incorrectly.")
+	}
+}
+
+func TestRegisterOutputHandler(t *testing.T) {
+	dc := ConfigFromFile("../../config/little_config.json")
+	dl := DispatcherLog{dispatcherConfig: *dc}
+	v := false
+	dummyF := func(ev Event) {
+		v = true
+		return
+	}
+	err := dl.RegisterOutputHandler(OutputHandlerCode("YYY"), dummyF)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	dl.outputHandlers[1].eventOutput = dummyF
+
+	evD := EventDummy{inputHandlerCode: InputHandlerCode("XYZ"), message: ""}
+	dl.InputEvent(&evD)
+	if v != true {
+		t.Error("Output handler registration did not lead to correct routing.")
 	}
 }

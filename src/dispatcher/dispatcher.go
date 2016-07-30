@@ -1,6 +1,8 @@
 package dispatcher
 
 import (
+	"errors"
+	"fmt"
 	"time"
 )
 
@@ -15,16 +17,25 @@ type Event interface {
 	EventType() int //TODO: will be an enumeration
 }
 
-func (dl *DispatcherLog) InputEvent(ev Event) OutputHandlerCode { //TODO: will return nothing
-	ok, outputE := dl.matchOutputHandler(ev)
+func (dl *DispatcherLog) InputEvent(ev Event) {
+	var outputE OutputHandlerElement
+	ok, outputEFromRule := dl.matchOutputHandler(ev)
+	for _, outputEl := range dl.outputHandlers {
+		if outputEl.code == outputEFromRule.code {
+			outputE = outputEl
+		}
+	}
+
 	if ok && outputE.eventOutput != nil {
-		return OutputHandlerCode(outputE.code)
+		outputE.eventOutput(ev)
+		return
 	} else {
-		return OutputHandlerCode("")
+		panic("No output function set for output handler:" + string(outputE.code))
+		return
 	}
 }
 
-func (dl *DispatcherLog) matchOutputHandler(ev Event) (ok bool, outputH OutputHandlerElement) {
+func (dl *DispatcherLog) matchOutputHandler(ev Event) (ok bool, outputH *OutputHandlerElement) {
 	//TODO: begin
 	//TODO: defer end
 	if !checkEventValidity(ev) {
@@ -32,10 +43,10 @@ func (dl *DispatcherLog) matchOutputHandler(ev Event) (ok bool, outputH OutputHa
 	}
 	if !dl.isOn {
 		ok = false //TODO: is this right?
-		outputH = OutputHandlerElement{OutputHandlerCode(""), nil}
+		outputH = &OutputHandlerElement{OutputHandlerCode(""), nil}
 		return
 	}
-	return true, *dl.routeEvent(ev)
+	return true, dl.routeEvent(ev)
 }
 
 func checkEventValidity(event Event) bool {
@@ -55,7 +66,7 @@ func (dl *DispatcherLog) routeEvent(ev Event) *OutputHandlerElement {
 	}
 	panic("Can't route event")
 	return nil
-	//TODO: end read
+	//TODO: end read.
 }
 
 func (rule *DispatchRule) ruleMatch(ev Event) (matches, intersects bool) {
@@ -66,4 +77,17 @@ func (rule *DispatchRule) ruleMatch(ev Event) (matches, intersects bool) {
 		intersects = rule.Intersect
 		return
 	}
+}
+
+//TODO: add locking.
+func (dl *DispatcherLog) RegisterOutputHandler(outputHC OutputHandlerCode, handlerFunc func(Event)) error {
+	for _, outputHE := range dl.outputHandlers {
+		fmt.Println(string(outputHE.code))
+		//fmt.Println("___:" + string(outputHC))
+		if outputHC == outputHE.code {
+			outputHE.eventOutput = handlerFunc
+			return nil
+		}
+	}
+	return errors.New("Failed to register output handler.")
 }
