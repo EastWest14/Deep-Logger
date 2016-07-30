@@ -11,3 +11,9 @@ func TestNew(t *testing.T) {
 		t.Error("New nandler created incorrectly.")
 	}
 }
+
+//TODO: implement.
+/*
+func TestLogEvent(t *testing.T) {
+
+}*/
