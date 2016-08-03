@@ -2,6 +2,7 @@ package dispatcher
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 )
@@ -21,6 +22,7 @@ type dispatcherConfig struct {
 func ConfigFromFile(filename string) *dispatcherConfig {
 	rawContent, err := ioutil.ReadFile(filename)
 	if err != nil {
+		fmt.Println(err.Error())
 		panic("Failed to load config.") //TODO: Don't panic here, return error
 	}
 

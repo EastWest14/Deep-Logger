@@ -6,7 +6,11 @@ import (
 )
 
 type DispatcherLog struct {
-	dispatcherConfig
+	*dispatcherConfig
+}
+
+func NewDispatcherWithFile(filename string) *DispatcherLog {
+	return &DispatcherLog{dispatcherConfig: ConfigFromFile(filename)}
 }
 
 type Event interface {

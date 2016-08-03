@@ -12,6 +12,12 @@ type BasicOutputHandler struct {
 	OutputWriter      io.Writer
 }
 
+func NewWithDispatcherAndOutputString(dl *dispatcher.DispatcherLog, outputCode string, outWriter io.Writer) *BasicOutputHandler {
+	boh := BasicOutputHandler{DispatchLog: dl, OutputHandlerCode: dispatcher.OutputHandlerCode(outputCode), OutputWriter: outWriter}
+	boh.RegisterWithDispatcher()
+	return &boh
+}
+
 func (boh *BasicOutputHandler) takeInEvent(ev dispatcher.Event) {
 	evString := fmt.Sprintln(string(ev.InputHandlerCode()) + " - " + ev.EventMessage())
 	boh.outputData([]byte(evString))
