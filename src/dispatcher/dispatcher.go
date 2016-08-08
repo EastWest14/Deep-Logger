@@ -17,25 +17,30 @@ type Event interface {
 	InputHandlerCode() InputHandlerCode
 	EventMessage() string
 	EventTime() time.Time
-	EventType() int //TODO: will be an enumeration
+	EventType() int //TODO: will be an enumeration.
 }
 
 func (dl *DispatcherLog) InputEvent(ev Event) {
+
 	var outputE OutputHandlerElement
 	ok, outputEFromRule := dl.matchOutputHandler(ev)
-	for _, outputEl := range dl.outputHandlers {
-		if outputEl.code == outputEFromRule.code {
-			outputE = *outputEl
-		}
-	}
 
-	if ok && outputE.eventOutput != nil {
+	if ok && outputEFromRule != nil {
+		//Need to find a pointer, not the value.
+		for _, outputEl := range dl.outputHandlers {
+			if outputEl.code == outputEFromRule.code {
+				outputE = *outputEl
+			}
+		}
 		outputE.eventOutput(ev)
+		return
+	} else if ok {
 		return
 	} else {
 		panic("No output function set for output handler:" + string(outputE.code))
 		return
 	}
+
 }
 
 func (dl *DispatcherLog) matchOutputHandler(ev Event) (ok bool, outputH *OutputHandlerElement) {
@@ -45,8 +50,8 @@ func (dl *DispatcherLog) matchOutputHandler(ev Event) (ok bool, outputH *OutputH
 		panic("event is invalid!")
 	}
 	if !dl.isOn {
-		ok = false //TODO: is this right?
-		outputH = &OutputHandlerElement{OutputHandlerCode(""), nil}
+		ok = true
+		outputH = nil
 		return
 	}
 	return true, dl.routeEvent(ev)

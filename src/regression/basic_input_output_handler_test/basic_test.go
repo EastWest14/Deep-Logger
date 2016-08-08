@@ -15,9 +15,9 @@ const (
 	OUTPUT_HANDLER_CODE = "ZZZ"
 )
 
-func TestMain(t *testing.T) {
+func TestA(t *testing.T) {
 	var buffer bytes.Buffer
-	inHandler := configureDispatcherAndHandlers(&buffer)
+	inHandler := configureDispatcherAndHandlers("../../../config/test_config.json", &buffer, INPUT_HANDLER_CODE, OUTPUT_HANDLER_CODE)
 
 	const message = "Hello World!"
 	inHandler.LogEvent(message)
@@ -30,9 +30,29 @@ func TestMain(t *testing.T) {
 	}
 }
 
-func configureDispatcherAndHandlers(writer io.Writer) *inhandl.BasicInputHandler {
-	disp := dispatcher.NewDispatcherWithFile("../../../config/test_config.json")
+func configureDispatcherAndHandlers(configFile string, writer io.Writer, inp_code, out_code string) *inhandl.BasicInputHandler {
+	disp := dispatcher.NewDispatcherWithFile(configFile)
 	inHandler := inhandl.NewWithDispatcherAndInputString(disp, INPUT_HANDLER_CODE)
 	_ = outhandl.NewWithDispatcherAndOutputString(disp, OUTPUT_HANDLER_CODE, writer)
 	return inHandler
+}
+
+type incrementWriter struct {
+	v int
+}
+
+func (iw *incrementWriter) Write(input []byte) (n int, err error) {
+	iw.v++
+	return 0, nil
+}
+
+func TestIsOff(t *testing.T) {
+	iw := &incrementWriter{v: 0}
+	inHandler := configureDispatcherAndHandlers("../../../config/test_config_off.json", iw, INPUT_HANDLER_CODE, OUTPUT_HANDLER_CODE)
+	inHandler.LogEvent("Shouldn't go through")
+
+	if iw.v != 0 {
+		t.Error("Got output although the dispatcher was off.")
+	}
+
 }
