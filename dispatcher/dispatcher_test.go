@@ -108,7 +108,7 @@ func TestRouteEvent(t *testing.T) {
 }
 
 func TestRegisterOutputHandler(t *testing.T) {
-	dc := ConfigFromFile("../../config/little_config.json")
+	dc := ConfigFromFile("../config/little_config.json")
 	dl := DispatcherLog{dispatcherConfig: dc}
 	v := false
 	dummyF := func(ev Event) {

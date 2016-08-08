@@ -23,7 +23,7 @@ func ConfigFromFile(filename string) *dispatcherConfig {
 	rawContent, err := ioutil.ReadFile(filename)
 	if err != nil {
 		fmt.Println(err.Error())
-		panic("Failed to load config.") //TODO: Don't panic here, return error
+		panic("Failed to load config: " + filename + ".") //TODO: Don't panic here, return error
 	}
 
 	return LoadConfig(string(rawContent))

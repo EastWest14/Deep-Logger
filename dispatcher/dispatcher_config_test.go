@@ -5,7 +5,7 @@ import (
 )
 
 func TestConfigFromFile(t *testing.T) {
-	dc := ConfigFromFile("../../config/little_config.json")
+	dc := ConfigFromFile("../config/little_config.json")
 	if dc == nil {
 		t.Error("Failed loading config from file.")
 	}

@@ -1,10 +1,10 @@
 package basic_input_output_handler_test
 
 import (
+	"../../dispatcher"
+	inhandl "../../handlers/basic_input_handler"
+	outhandl "../../handlers/basic_output_handler"
 	"bytes"
-	"dispatcher"
-	inhandl "handlers/basic_input_handler"
-	outhandl "handlers/basic_output_handler"
 	"io"
 	"strings"
 	"testing"
@@ -17,7 +17,7 @@ const (
 
 func TestA(t *testing.T) {
 	var buffer bytes.Buffer
-	inHandler := configureDispatcherAndHandlers("../../../config/test_config.json", &buffer, INPUT_HANDLER_CODE, OUTPUT_HANDLER_CODE)
+	inHandler := configureDispatcherAndHandlers("../../config/test_config.json", &buffer, INPUT_HANDLER_CODE, OUTPUT_HANDLER_CODE)
 
 	const message = "Hello World!"
 	inHandler.LogEvent(message)
@@ -48,7 +48,7 @@ func (iw *incrementWriter) Write(input []byte) (n int, err error) {
 
 func TestIsOff(t *testing.T) {
 	iw := &incrementWriter{v: 0}
-	inHandler := configureDispatcherAndHandlers("../../../config/test_config_off.json", iw, INPUT_HANDLER_CODE, OUTPUT_HANDLER_CODE)
+	inHandler := configureDispatcherAndHandlers("../../config/test_config_off.json", iw, INPUT_HANDLER_CODE, OUTPUT_HANDLER_CODE)
 	inHandler.LogEvent("Shouldn't go through")
 
 	if iw.v != 0 {
