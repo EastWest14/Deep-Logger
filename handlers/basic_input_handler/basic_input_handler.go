@@ -7,20 +7,20 @@ import (
 
 type BasicInputHandler struct {
 	DispatchLog      *dispatcher.DispatcherLog
-	InputHandlerCode dispatcher.InputHandlerCode
+	InputHandlerCode string
 }
 
 func NewWithDispatcherAndInputString(dl *dispatcher.DispatcherLog, inputCode string) *BasicInputHandler {
-	return &BasicInputHandler{DispatchLog: dl, InputHandlerCode: dispatcher.InputHandlerCode(inputCode)}
+	return &BasicInputHandler{DispatchLog: dl, InputHandlerCode: inputCode}
 }
 
 type basicEvent struct {
-	inputHandlerCode dispatcher.InputHandlerCode
+	inputHandlerCode string
 	eventMessage     string
 	eventTime        time.Time
 }
 
-func (be *basicEvent) InputHandlerCode() dispatcher.InputHandlerCode {
+func (be *basicEvent) InputHandlerCode() string {
 	return be.inputHandlerCode
 }
 

@@ -1,7 +1,6 @@
 package basic_output_handler
 
 import (
-	"deeplogger/dispatcher"
 	"os"
 	"testing"
 	"time"
@@ -15,13 +14,13 @@ func TestTakeInEvent(t *testing.T) {
 }
 
 type EventDummy struct {
-	inputHandlerCode dispatcher.InputHandlerCode
+	inputHandlerCode string
 	message          string
 	time             time.Time
 	evType           int
 }
 
-func (evD *EventDummy) InputHandlerCode() dispatcher.InputHandlerCode {
+func (evD *EventDummy) InputHandlerCode() string {
 	return evD.inputHandlerCode
 }
 

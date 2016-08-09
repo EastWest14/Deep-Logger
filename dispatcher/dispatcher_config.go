@@ -10,7 +10,7 @@ import (
 type dispatcherConfig struct {
 	name           string
 	isOn           bool
-	inputHandlers  []InputHandlerCode      //TODO: provide access methods
+	inputHandlers  []string                //TODO: provide access methods
 	outputHandlers []*OutputHandlerElement //TODO: provide access methods
 	dispatchRules  []DispatchRule          //TODO: provide access methods
 	//TODO: ShouldPanicOnInvalidInput
@@ -45,7 +45,7 @@ func configFromString(jsonStr string) *dispatcherConfig {
 	for _, inCode := range inCodes {
 		//TODO: check validity
 		stringCode := inCode.(string)
-		dc.inputHandlers = append(dc.inputHandlers, InputHandlerCode(stringCode))
+		dc.inputHandlers = append(dc.inputHandlers, stringCode)
 	}
 
 	outCodes := dat["outputHandlers"].([]interface{})
@@ -71,7 +71,7 @@ func loadDispatchRules(dat map[string]interface{}) []DispatchRule {
 		output := dRule["output"].(string)
 		intersect := dRule["intersect"].(bool)
 
-		dispatchRules = append(dispatchRules, *newDispatchRule(InputHandlerCode(input), OutputHandlerCode(output), intersect))
+		dispatchRules = append(dispatchRules, *newDispatchRule(input, OutputHandlerCode(output), intersect))
 	}
 	return dispatchRules
 }
@@ -114,12 +114,12 @@ type OutputHandlerElement struct {
 }
 
 type DispatchRule struct {
-	Input     InputHandlerCode
+	Input     string
 	Output    OutputHandlerElement
 	Intersect bool
 }
 
 //Input is input handler code or "ALL"
-func newDispatchRule(input InputHandlerCode, output OutputHandlerCode, intersect bool) *DispatchRule {
+func newDispatchRule(input string, output OutputHandlerCode, intersect bool) *DispatchRule {
 	return &DispatchRule{Input: input, Output: OutputHandlerElement{output, nil}, Intersect: intersect}
 }

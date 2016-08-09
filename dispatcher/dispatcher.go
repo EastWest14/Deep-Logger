@@ -14,7 +14,7 @@ func NewDispatcherWithFile(filename string) *DispatcherLog {
 }
 
 type Event interface {
-	InputHandlerCode() InputHandlerCode
+	InputHandlerCode() string
 	EventMessage() string
 	EventTime() time.Time
 	EventType() int //TODO: will be an enumeration.

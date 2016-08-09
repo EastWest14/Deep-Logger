@@ -4,8 +4,6 @@ import (
 	"strings"
 )
 
-type InputHandlerCode string
-
 //TODO: add error codes?
 
 /*
@@ -30,19 +28,18 @@ func (dc *dispatcherConfig) AddInputHandlerCode(iHanCode InputHandlerCode) error
 	return nil
 }*/
 
-func checkInputCodeValidity(inputCode InputHandlerCode) bool {
-	ic := string(inputCode)
-	if len(ic) != 3 {
+func checkInputCodeValidity(inputCode string) bool {
+	if len(inputCode) != 3 {
 		return false
 	}
-	if strings.ToUpper(ic) != ic {
+	if strings.ToUpper(inputCode) != inputCode {
 		return false
 	}
 	return true
 }
 
 //check if this error code can be inserted into the slice (check duplicates)
-func (dc *dispatcherConfig) checkInputCodeInsertability(iHanCode InputHandlerCode) bool {
+func (dc *dispatcherConfig) checkInputCodeInsertability(iHanCode string) bool {
 	for _, code := range dc.inputHandlers {
 		if code == iHanCode {
 			return false

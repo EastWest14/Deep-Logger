@@ -1,13 +1,12 @@
 package basic_input_handler
 
 import (
-	"deeplogger/dispatcher"
 	"testing"
 )
 
 func TestNew(t *testing.T) {
 	bih := NewWithDispatcherAndInputString(nil, "ABC")
-	if bih.InputHandlerCode != dispatcher.InputHandlerCode("ABC") {
+	if bih.InputHandlerCode != "ABC" {
 		t.Error("New nandler created incorrectly.")
 	}
 }

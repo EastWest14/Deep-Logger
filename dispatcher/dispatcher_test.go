@@ -47,7 +47,7 @@ func TestMatchOutputHandler(t *testing.T) {
 
 func TestCheckEventValidity(t *testing.T) {
 	cases := []struct {
-		inputCode InputHandlerCode
+		inputCode string
 		message   string
 		valid     bool
 	}{
@@ -71,13 +71,13 @@ func TestCheckEventValidity(t *testing.T) {
 }
 
 type EventDummy struct {
-	inputHandlerCode InputHandlerCode
+	inputHandlerCode string
 	message          string
 	time             time.Time
 	evType           int
 }
 
-func (evD *EventDummy) InputHandlerCode() InputHandlerCode {
+func (evD *EventDummy) InputHandlerCode() string {
 	return evD.inputHandlerCode
 }
 
@@ -100,7 +100,7 @@ func TestRouteEvent(t *testing.T) {
 	if string(outputHandlerEl.code) != "WOW" {
 		t.Error("Event routed incorrectly.")
 	}
-	ev.inputHandlerCode = InputHandlerCode("XYZ")
+	ev.inputHandlerCode = "XYZ"
 	outputHandlerEl = dl.routeEvent(&ev)
 	if string(outputHandlerEl.code) != "LOL" {
 		t.Error("Event routed incorrectly.")
@@ -120,7 +120,7 @@ func TestRegisterOutputHandler(t *testing.T) {
 		t.Error(err.Error())
 	}
 
-	evD := EventDummy{inputHandlerCode: InputHandlerCode("XYZ"), message: ""}
+	evD := EventDummy{inputHandlerCode: "XYZ", message: ""}
 	dl.InputEvent(&evD)
 	if v != true {
 		t.Error("Output handler registration did not lead to correct routing.")
