@@ -88,7 +88,7 @@ func (rule *DispatchRule) ruleMatch(ev Event) (matches, intersects bool) {
 }
 
 //TODO: add locking.
-func (dl *DispatcherLog) RegisterOutputHandler(outputHC OutputHandlerCode, handlerFunc func(Event)) error {
+func (dl *DispatcherLog) RegisterOutputHandler(outputHC string, handlerFunc func(Event)) error {
 	for _, outputHE := range dl.outputHandlers {
 		if outputHE.code == outputHC {
 			outputHE.eventOutput = handlerFunc

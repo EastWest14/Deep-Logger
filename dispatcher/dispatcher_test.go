@@ -24,7 +24,7 @@ func TestInputEvent(t *testing.T) {
 		v = true
 		return
 	}
-	err := dl.RegisterOutputHandler(OutputHandlerCode("LOL"), dummyF)
+	err := dl.RegisterOutputHandler("LOL", dummyF)
 	if err != nil {
 		t.Error(err.Error())
 	}
@@ -40,7 +40,7 @@ func TestMatchOutputHandler(t *testing.T) {
 	dl := DispatcherLog{configFromString(sampleJSON)}
 	ev := &EventDummy{inputHandlerCode: "ABC", message: ""}
 	ok, outputH := dl.matchOutputHandler(ev)
-	if !ok || string(outputH.code) != "WOW" {
+	if !ok || outputH.code != "WOW" {
 		t.Error("Event routed incorrectly.")
 	}
 }
@@ -97,12 +97,12 @@ func TestRouteEvent(t *testing.T) {
 	dl := DispatcherLog{configFromString(sampleJSON)}
 	ev := EventDummy{inputHandlerCode: "ABC", message: ""}
 	outputHandlerEl := dl.routeEvent(&ev)
-	if string(outputHandlerEl.code) != "WOW" {
+	if outputHandlerEl.code != "WOW" {
 		t.Error("Event routed incorrectly.")
 	}
 	ev.inputHandlerCode = "XYZ"
 	outputHandlerEl = dl.routeEvent(&ev)
-	if string(outputHandlerEl.code) != "LOL" {
+	if outputHandlerEl.code != "LOL" {
 		t.Error("Event routed incorrectly.")
 	}
 }
@@ -115,7 +115,7 @@ func TestRegisterOutputHandler(t *testing.T) {
 		v = true
 		return
 	}
-	err := dl.RegisterOutputHandler(OutputHandlerCode("YYY"), dummyF)
+	err := dl.RegisterOutputHandler("YYY", dummyF)
 	if err != nil {
 		t.Error(err.Error())
 	}
