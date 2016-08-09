@@ -1,7 +1,7 @@
 package basic_output_handler
 
 import (
-	"../../dispatcher"
+	"deeplogger/dispatcher"
 	"os"
 	"testing"
 	"time"

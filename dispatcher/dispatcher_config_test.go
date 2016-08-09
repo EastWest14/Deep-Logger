@@ -5,13 +5,13 @@ import (
 )
 
 func TestConfigFromFile(t *testing.T) {
-	dc := ConfigFromFile("../config/little_config.json")
+	dc := configFromFile("../config/little_config.json")
 	if dc == nil {
 		t.Error("Failed loading config from file.")
 	}
 }
 
-func TestLoadConfig(t *testing.T) {
+func TestConfigFromString(t *testing.T) {
 	caseZero := `
 	{"name": "LALALA",
 	"isOn": true,
@@ -22,8 +22,8 @@ func TestLoadConfig(t *testing.T) {
 		{"input":"AAA", "output": "LLL", "intersect": true}
 	]}
 	`
-	dc := LoadConfig(caseZero)
-	if dc.Name() != "LALALA" {
+	dc := configFromString(caseZero)
+	if dc.name != "LALALA" {
 		t.Error("DispatchConfig name not being read from JSON correctly.")
 	}
 	if dc.isOn != true {
@@ -85,31 +85,15 @@ func TestLoadConfig(t *testing.T) {
 	}
 }
 
-func TestConfigSetName(t *testing.T) {
-	dc := dispatcherConfig{}
-	dc.SetName("ABC")
-	if dc.name != "ABC" {
-		t.Error("DispatchConfig name not setting correctly.")
-	}
-}
-
-func TestConfigName(t *testing.T) {
-	dc := dispatcherConfig{}
-	dc.name = "ABC"
-	if dc.Name() != "ABC" {
-		t.Error("DispatchConfig name not being read correctly.")
-	}
-}
-
-func TestConfigSetIsOn(t *testing.T) {
+func TestConfigSetOnOff(t *testing.T) {
 	dc := dispatcherConfig{}
 	dc.isOn = false
-	dc.SetIsOn(true)
+	dc.TurnOn()
 	if dc.isOn != true {
 		t.Error("DispatchConfig not turning on.")
 	}
 	dc.isOn = true
-	dc.SetIsOn(false)
+	dc.TurnOff()
 	if dc.isOn != false {
 		t.Error("DispatchConfig not turning off.")
 	}
@@ -127,11 +111,10 @@ func TestIsOn(t *testing.T) {
 	}
 }
 
-//TODO: write tests for checking internal consistency
-
+//TODO: write tests for checking internal consistency.
 func TestNewDispatchRule(t *testing.T) {
-	dr := NewDispatchRule("ALL", "AAA", true)
+	dr := newDispatchRule("ALL", "AAA", true)
 	if string(dr.Input) != "ALL" || string(dr.Output.code) != "AAA" || dr.Intersect != true {
-		t.Error("NewDispatchRule sets rule incorrectly.")
+		t.Error("newDispatchRule sets rule incorrectly.")
 	}
 }

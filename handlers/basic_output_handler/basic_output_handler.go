@@ -1,7 +1,7 @@
 package basic_output_handler
 
 import (
-	"../../dispatcher"
+	"deeplogger/dispatcher"
 	"fmt"
 	"io"
 )
@@ -14,7 +14,7 @@ type BasicOutputHandler struct {
 
 func NewWithDispatcherAndOutputString(dl *dispatcher.DispatcherLog, outputCode string, outWriter io.Writer) *BasicOutputHandler {
 	boh := BasicOutputHandler{DispatchLog: dl, OutputHandlerCode: dispatcher.OutputHandlerCode(outputCode), OutputWriter: outWriter}
-	boh.RegisterWithDispatcher()
+	boh.registerWithDispatcher()
 	return &boh
 }
 
@@ -27,6 +27,6 @@ func (boh *BasicOutputHandler) outputData(data []byte) {
 	boh.OutputWriter.Write(data)
 }
 
-func (boh *BasicOutputHandler) RegisterWithDispatcher() {
+func (boh *BasicOutputHandler) registerWithDispatcher() {
 	boh.DispatchLog.RegisterOutputHandler(boh.OutputHandlerCode, boh.takeInEvent)
 }

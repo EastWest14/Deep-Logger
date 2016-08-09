@@ -19,17 +19,17 @@ type dispatcherConfig struct {
 //TODO: locks on reads.
 //TODO: locks on writes.
 
-func ConfigFromFile(filename string) *dispatcherConfig {
+func configFromFile(filename string) *dispatcherConfig {
 	rawContent, err := ioutil.ReadFile(filename)
 	if err != nil {
 		fmt.Println(err.Error())
 		panic("Failed to load config: " + filename + ".") //TODO: Don't panic here, return error
 	}
 
-	return LoadConfig(string(rawContent))
+	return configFromString(string(rawContent))
 }
 
-func LoadConfig(jsonStr string) *dispatcherConfig {
+func configFromString(jsonStr string) *dispatcherConfig {
 	dc := dispatcherConfig{}
 
 	var dat map[string]interface{}
@@ -71,30 +71,25 @@ func loadDispatchRules(dat map[string]interface{}) []DispatchRule {
 		output := dRule["output"].(string)
 		intersect := dRule["intersect"].(bool)
 
-		dispatchRules = append(dispatchRules, *NewDispatchRule(InputHandlerCode(input), OutputHandlerCode(output), intersect))
+		dispatchRules = append(dispatchRules, *newDispatchRule(InputHandlerCode(input), OutputHandlerCode(output), intersect))
 	}
 	return dispatchRules
 }
 
-func (dc *dispatcherConfig) SetName(newName string) {
-	//TODO: check name validity
-	dc.beginChangingConfigState()
-	dc.name = newName
-	dc.endChangingConfigState()
-}
-
-func (dc *dispatcherConfig) Name() string {
-	return dc.name
-}
-
-func (dc *dispatcherConfig) SetIsOn(on bool) {
-	dc.beginChangingConfigState()
-	dc.isOn = on
-	dc.endChangingConfigState()
-}
-
 func (dc *dispatcherConfig) IsOn() bool {
 	return dc.isOn
+}
+
+func (dc *dispatcherConfig) TurnOn() {
+	dc.beginChangingConfigState()
+	dc.isOn = true
+	dc.endChangingConfigState()
+}
+
+func (dc *dispatcherConfig) TurnOff() {
+	dc.beginChangingConfigState()
+	dc.isOn = false
+	dc.endChangingConfigState()
 }
 
 func (dc *dispatcherConfig) beginChangingConfigState() {
@@ -125,6 +120,6 @@ type DispatchRule struct {
 }
 
 //Input is input handler code or "ALL"
-func NewDispatchRule(input InputHandlerCode, output OutputHandlerCode, intersect bool) *DispatchRule {
+func newDispatchRule(input InputHandlerCode, output OutputHandlerCode, intersect bool) *DispatchRule {
 	return &DispatchRule{Input: input, Output: OutputHandlerElement{output, nil}, Intersect: intersect}
 }

@@ -1,10 +1,10 @@
 package basic_input_output_handler_test
 
 import (
-	"../../dispatcher"
-	inhandl "../../handlers/basic_input_handler"
-	outhandl "../../handlers/basic_output_handler"
 	"bytes"
+	"deeplogger/dispatcher"
+	inhandl "deeplogger/handlers/basic_input_handler"
+	outhandl "deeplogger/handlers/basic_output_handler"
 	"io"
 	"strings"
 	"testing"

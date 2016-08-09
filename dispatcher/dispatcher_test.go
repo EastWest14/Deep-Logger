@@ -17,7 +17,7 @@ var sampleJSON = `
 	`
 
 func TestInputEvent(t *testing.T) {
-	dl := DispatcherLog{LoadConfig(sampleJSON)}
+	dl := DispatcherLog{configFromString(sampleJSON)}
 
 	v := false
 	dummyF := func(ev Event) {
@@ -37,7 +37,7 @@ func TestInputEvent(t *testing.T) {
 }
 
 func TestMatchOutputHandler(t *testing.T) {
-	dl := DispatcherLog{LoadConfig(sampleJSON)}
+	dl := DispatcherLog{configFromString(sampleJSON)}
 	ev := &EventDummy{inputHandlerCode: "ABC", message: ""}
 	ok, outputH := dl.matchOutputHandler(ev)
 	if !ok || string(outputH.code) != "WOW" {
@@ -94,7 +94,7 @@ func (evD *EventDummy) EventType() int {
 }
 
 func TestRouteEvent(t *testing.T) {
-	dl := DispatcherLog{LoadConfig(sampleJSON)}
+	dl := DispatcherLog{configFromString(sampleJSON)}
 	ev := EventDummy{inputHandlerCode: "ABC", message: ""}
 	outputHandlerEl := dl.routeEvent(&ev)
 	if string(outputHandlerEl.code) != "WOW" {
@@ -108,7 +108,7 @@ func TestRouteEvent(t *testing.T) {
 }
 
 func TestRegisterOutputHandler(t *testing.T) {
-	dc := ConfigFromFile("../config/little_config.json")
+	dc := configFromFile("../config/little_config.json")
 	dl := DispatcherLog{dispatcherConfig: dc}
 	v := false
 	dummyF := func(ev Event) {

@@ -10,7 +10,7 @@ type DispatcherLog struct {
 }
 
 func NewDispatcherWithFile(filename string) *DispatcherLog {
-	return &DispatcherLog{dispatcherConfig: ConfigFromFile(filename)}
+	return &DispatcherLog{dispatcherConfig: configFromFile(filename)}
 }
 
 type Event interface {

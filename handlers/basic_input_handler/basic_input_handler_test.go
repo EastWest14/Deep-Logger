@@ -1,7 +1,7 @@
 package basic_input_handler
 
 import (
-	"../../dispatcher"
+	"deeplogger/dispatcher"
 	"testing"
 )
 

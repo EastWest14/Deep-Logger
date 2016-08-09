@@ -1,7 +1,6 @@
 package dispatcher
 
 import (
-	"errors"
 	"strings"
 )
 
@@ -9,6 +8,7 @@ type InputHandlerCode string
 
 //TODO: add error codes?
 
+/*
 func (dc *dispatcherConfig) AddInputHandlerCode(iHanCode InputHandlerCode) error {
 	dc.beginChangingConfigState()
 	if checkInputCodeValidity(iHanCode) != true {
@@ -28,7 +28,7 @@ func (dc *dispatcherConfig) AddInputHandlerCode(iHanCode InputHandlerCode) error
 	dc.inputHandlers[length] = iHanCode
 	dc.endChangingConfigState()
 	return nil
-}
+}*/
 
 func checkInputCodeValidity(inputCode InputHandlerCode) bool {
 	ic := string(inputCode)
