@@ -2,7 +2,7 @@ package basic_input_handler
 
 import (
 	dispatcher "deeplogger/dispatcher"
-	"time"
+	"deeplogger/simpleevent"
 )
 
 type BasicInputHandler struct {
@@ -14,6 +14,7 @@ func NewWithDispatcherAndInputString(dl *dispatcher.DispatcherLog, inputCode str
 	return &BasicInputHandler{DispatchLog: dl, InputHandlerCode: inputCode}
 }
 
+/*
 type basicEvent struct {
 	inputHandlerCode string
 	eventMessage     string
@@ -34,7 +35,7 @@ func (be *basicEvent) EventTime() time.Time {
 
 func (be *basicEvent) EventType() int {
 	return 0
-}
+}*/
 
 func (bih *BasicInputHandler) LogEvent(message string) {
 	if bih.DispatchLog == nil {
@@ -42,6 +43,8 @@ func (bih *BasicInputHandler) LogEvent(message string) {
 		return
 	}
 
-	ev := &basicEvent{inputHandlerCode: bih.InputHandlerCode, eventMessage: message, eventTime: time.Now()}
+	//ev := &basicEvent{inputHandlerCode: bih.InputHandlerCode, eventMessage: message, eventTime: time.Now()}
+	ev := simpleevent.New(message)
+	ev.SetInputHandlerCode(bih.InputHandlerCode)
 	bih.DispatchLog.InputEvent(ev)
 }

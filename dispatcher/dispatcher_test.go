@@ -1,8 +1,8 @@
 package dispatcher
 
 import (
+	"deeplogger/simpleevent"
 	"testing"
-	"time"
 )
 
 var sampleJSON = `
@@ -29,7 +29,8 @@ func TestInputEvent(t *testing.T) {
 		t.Error(err.Error())
 	}
 
-	ev := &EventDummy{inputHandlerCode: "XYZ", message: ""}
+	ev := simpleevent.New("")
+	ev.SetInputHandlerCode("XYZ")
 	dl.InputEvent(ev)
 	if v != true {
 		t.Error("Event routed incorrectly.")
@@ -38,7 +39,8 @@ func TestInputEvent(t *testing.T) {
 
 func TestMatchOutputHandler(t *testing.T) {
 	dl := DispatcherLog{configFromString(sampleJSON)}
-	ev := &EventDummy{inputHandlerCode: "ABC", message: ""}
+	ev := simpleevent.New("")
+	ev.SetInputHandlerCode("ABC")
 	ok, outputH := dl.matchOutputHandler(ev)
 	if !ok || outputH.code != "WOW" {
 		t.Error("Event routed incorrectly.")
@@ -63,45 +65,25 @@ func TestCheckEventValidity(t *testing.T) {
 	}
 
 	for i, aCase := range cases {
-		evD := EventDummy{inputHandlerCode: aCase.inputCode, message: aCase.message}
-		if chVal := checkEventValidity(&evD); chVal != aCase.valid {
+		ev := simpleevent.New(aCase.message)
+		ev.SetInputHandlerCode(aCase.inputCode)
+		if chVal := checkEventValidity(ev); chVal != aCase.valid {
 			t.Errorf("Error in case %d. Expecting %v, got %v", i, aCase.valid, chVal)
 		}
 	}
 }
 
-type EventDummy struct {
-	inputHandlerCode string
-	message          string
-	time             time.Time
-	evType           int
-}
-
-func (evD *EventDummy) InputHandlerCode() string {
-	return evD.inputHandlerCode
-}
-
-func (evD *EventDummy) EventMessage() string {
-	return evD.message
-}
-
-func (evD *EventDummy) EventTime() time.Time {
-	return evD.time
-}
-
-func (evD *EventDummy) EventType() int {
-	return evD.evType
-}
-
 func TestRouteEvent(t *testing.T) {
 	dl := DispatcherLog{configFromString(sampleJSON)}
-	ev := EventDummy{inputHandlerCode: "ABC", message: ""}
-	outputHandlerEl := dl.routeEvent(&ev)
+	ev := simpleevent.New("")
+	ev.SetInputHandlerCode("ABC")
+	outputHandlerEl := dl.routeEvent(ev)
 	if outputHandlerEl.code != "WOW" {
 		t.Error("Event routed incorrectly.")
 	}
-	ev.inputHandlerCode = "XYZ"
-	outputHandlerEl = dl.routeEvent(&ev)
+	ev = simpleevent.New("")
+	ev.SetInputHandlerCode("XYZ")
+	outputHandlerEl = dl.routeEvent(ev)
 	if outputHandlerEl.code != "LOL" {
 		t.Error("Event routed incorrectly.")
 	}
@@ -120,8 +102,9 @@ func TestRegisterOutputHandler(t *testing.T) {
 		t.Error(err.Error())
 	}
 
-	evD := EventDummy{inputHandlerCode: "XYZ", message: ""}
-	dl.InputEvent(&evD)
+	ev := simpleevent.New("")
+	ev.SetInputHandlerCode("XYZ")
+	dl.InputEvent(ev)
 	if v != true {
 		t.Error("Output handler registration did not lead to correct routing.")
 	}

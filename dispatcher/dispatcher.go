@@ -2,7 +2,6 @@ package dispatcher
 
 import (
 	"errors"
-	"time"
 )
 
 type DispatcherLog struct {
@@ -15,9 +14,8 @@ func NewDispatcherWithFile(filename string) *DispatcherLog {
 
 type Event interface {
 	InputHandlerCode() string
+	SetInputHandlerCode(string)
 	EventMessage() string
-	EventTime() time.Time
-	EventType() int //TODO: will be an enumeration.
 }
 
 func (dl *DispatcherLog) InputEvent(ev Event) {
