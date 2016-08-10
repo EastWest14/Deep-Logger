@@ -5,6 +5,7 @@ import (
 	"deeplogger/dispatcher"
 	inhandl "deeplogger/handlers/basic_input_handler"
 	outhandl "deeplogger/handlers/basic_output_handler"
+	"fmt"
 	"io"
 	"strings"
 	"testing"
@@ -28,6 +29,7 @@ func TestA(t *testing.T) {
 	if !strings.Contains(output, INPUT_HANDLER_CODE) {
 		t.Errorf("Log output doesn't contain the input code: %s, instead the message is: %s", INPUT_HANDLER_CODE, output)
 	}
+	fmt.Println(output)
 }
 
 func configureDispatcherAndHandlers(configFile string, writer io.Writer, inp_code, out_code string) *inhandl.BasicInputHandler {
