@@ -19,7 +19,7 @@ func NewWithDispatcherAndOutputString(dl *dispatcher.DispatcherLog, outputCode s
 }
 
 func (boh *BasicOutputHandler) takeInEvent(ev dispatcher.Event) {
-	evString := fmt.Sprintln(ev.InputHandlerCode() + " - " + ev.EventMessage())
+	evString := fmt.Sprintln("[" + ev.InputHandlerCode() + "]: " + ev.EventMessage())
 	boh.outputData([]byte(evString))
 }
 
