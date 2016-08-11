@@ -1,4 +1,4 @@
-package basic_output_handler
+package basicouthandler
 
 import (
 	"deeplogger/dispatcher"

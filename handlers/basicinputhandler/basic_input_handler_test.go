@@ -1,4 +1,4 @@
-package basic_input_handler
+package basicinputhandler
 
 import (
 	"testing"

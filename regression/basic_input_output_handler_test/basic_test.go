@@ -2,9 +2,11 @@ package basic_input_output_handler_test
 
 import (
 	"bytes"
+	"deeplogger"
 	"deeplogger/dispatcher"
-	inhandl "deeplogger/handlers/basic_input_handler"
-	outhandl "deeplogger/handlers/basic_output_handler"
+	inhandl "deeplogger/handlers/basicinputhandler"
+	outhandl "deeplogger/handlers/basicouthandler"
+	"deeplogger/simpleevent"
 	"fmt"
 	"io"
 	"strings"
@@ -21,7 +23,7 @@ func TestA(t *testing.T) {
 	inHandler := configureDispatcherAndHandlers("../../config/test_config.json", &buffer, INPUT_HANDLER_CODE, OUTPUT_HANDLER_CODE)
 
 	const message = "Hello World!"
-	inHandler.LogEvent(message)
+	inHandler.LogEvent(simpleevent.New(message))
 	output := buffer.String()
 	if !strings.Contains(output, message) {
 		t.Errorf("Log output doesn't contain the message: %s, instead the message is: %s", message, output)
@@ -39,21 +41,12 @@ func configureDispatcherAndHandlers(configFile string, writer io.Writer, inp_cod
 	return inHandler
 }
 
-type incrementWriter struct {
-	v int
-}
-
-func (iw *incrementWriter) Write(input []byte) (n int, err error) {
-	iw.v++
-	return 0, nil
-}
-
 func TestIsOff(t *testing.T) {
-	iw := &incrementWriter{v: 0}
-	inHandler := configureDispatcherAndHandlers("../../config/test_config_off.json", iw, INPUT_HANDLER_CODE, OUTPUT_HANDLER_CODE)
-	inHandler.LogEvent("Shouldn't go through")
+	iw := deeplogger.CountWriter{V: 0}
+	inHandler := configureDispatcherAndHandlers("../../config/test_config_off.json", &iw, INPUT_HANDLER_CODE, OUTPUT_HANDLER_CODE)
+	inHandler.LogEvent(simpleevent.New("Shouldn't go through"))
 
-	if iw.v != 0 {
+	if iw.V != 0 {
 		t.Error("Got output although the dispatcher was off.")
 	}
 
