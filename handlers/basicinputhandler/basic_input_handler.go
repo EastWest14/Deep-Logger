@@ -6,11 +6,11 @@ import (
 
 type BasicInputHandler struct {
 	DispatchLog      *dispatcher.DispatcherLog
-	InputHandlerCode string
+	InputHandlerName string
 }
 
-func NewWithDispatcherAndInputString(dl *dispatcher.DispatcherLog, inputCode string) *BasicInputHandler {
-	return &BasicInputHandler{DispatchLog: dl, InputHandlerCode: inputCode}
+func NewWithDispatcherAndInputString(dl *dispatcher.DispatcherLog, inputName string) *BasicInputHandler {
+	return &BasicInputHandler{DispatchLog: dl, InputHandlerName: inputName}
 }
 
 func (bih *BasicInputHandler) LogEvent(ev dispatcher.Event) {
@@ -18,6 +18,6 @@ func (bih *BasicInputHandler) LogEvent(ev dispatcher.Event) {
 		panic("No dispatcher registered.")
 		return
 	}
-	ev.SetInputHandlerCode(bih.InputHandlerCode)
+	ev.SetInputHandlerName(bih.InputHandlerName)
 	bih.DispatchLog.InputEvent(ev)
 }

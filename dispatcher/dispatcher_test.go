@@ -30,7 +30,7 @@ func TestInputEvent(t *testing.T) {
 	}
 
 	ev := simpleevent.New("")
-	ev.SetInputHandlerCode("XYZ")
+	ev.SetInputHandlerName("XYZ")
 	dl.InputEvent(ev)
 	if v != true {
 		t.Error("Event routed incorrectly.")
@@ -40,16 +40,16 @@ func TestInputEvent(t *testing.T) {
 func TestMatchOutputHandler(t *testing.T) {
 	dl := DispatcherLog{configFromString(sampleJSON)}
 	ev := simpleevent.New("")
-	ev.SetInputHandlerCode("ABC")
+	ev.SetInputHandlerName("ABC")
 	ok, outputH := dl.matchOutputHandler(ev)
-	if !ok || outputH.code != "WOW" {
+	if !ok || outputH.name != "WOW" {
 		t.Error("Event routed incorrectly.")
 	}
 }
 
 func TestCheckEventValidity(t *testing.T) {
 	cases := []struct {
-		inputCode string
+		inputName string
 		message   string
 		valid     bool
 	}{
@@ -66,7 +66,7 @@ func TestCheckEventValidity(t *testing.T) {
 
 	for i, aCase := range cases {
 		ev := simpleevent.New(aCase.message)
-		ev.SetInputHandlerCode(aCase.inputCode)
+		ev.SetInputHandlerName(aCase.inputName)
 		if chVal := checkEventValidity(ev); chVal != aCase.valid {
 			t.Errorf("Error in case %d. Expecting %v, got %v", i, aCase.valid, chVal)
 		}
@@ -76,15 +76,15 @@ func TestCheckEventValidity(t *testing.T) {
 func TestRouteEvent(t *testing.T) {
 	dl := DispatcherLog{configFromString(sampleJSON)}
 	ev := simpleevent.New("")
-	ev.SetInputHandlerCode("ABC")
+	ev.SetInputHandlerName("ABC")
 	outputHandlerEl := dl.routeEvent(ev)
-	if outputHandlerEl.code != "WOW" {
+	if outputHandlerEl.name != "WOW" {
 		t.Error("Event routed incorrectly.")
 	}
 	ev = simpleevent.New("")
-	ev.SetInputHandlerCode("XYZ")
+	ev.SetInputHandlerName("XYZ")
 	outputHandlerEl = dl.routeEvent(ev)
-	if outputHandlerEl.code != "LOL" {
+	if outputHandlerEl.name != "LOL" {
 		t.Error("Event routed incorrectly.")
 	}
 }
@@ -103,7 +103,7 @@ func TestRegisterOutputHandler(t *testing.T) {
 	}
 
 	ev := simpleevent.New("")
-	ev.SetInputHandlerCode("XYZ")
+	ev.SetInputHandlerName("XYZ")
 	dl.InputEvent(ev)
 	if v != true {
 		t.Error("Output handler registration did not lead to correct routing.")

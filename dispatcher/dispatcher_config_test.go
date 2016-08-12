@@ -31,7 +31,7 @@ func TestConfigFromString(t *testing.T) {
 	}
 	//Input handlers Unmarshal test
 	if len(dc.inputHandlers) != 2 {
-		t.Error("DispatchConfig number of input codes read is off.")
+		t.Error("DispatchConfig number of input names read is off.")
 		return
 	}
 	valid := true
@@ -47,28 +47,28 @@ func TestConfigFromString(t *testing.T) {
 		valid = false
 	}
 	if valid == false {
-		t.Error("DispatchConfig input codes read incorrectly from JSON.")
+		t.Error("DispatchConfig input names read incorrectly from JSON.")
 	}
 
 	//Output handlers Unmarshal test
 	if len(dc.outputHandlers) != 2 {
-		t.Error("DispatchConfig number of output codes read is off.")
+		t.Error("DispatchConfig number of output names read is off.")
 		return
 	}
 	valid = true
-	if dc.outputHandlers[0].code == "WOW" {
-		if dc.outputHandlers[1].code != "LOL" {
+	if dc.outputHandlers[0].name == "WOW" {
+		if dc.outputHandlers[1].name != "LOL" {
 			valid = false
 		}
-	} else if dc.outputHandlers[0].code == "LOL" {
-		if dc.outputHandlers[1].code != "WOW" {
+	} else if dc.outputHandlers[0].name == "LOL" {
+		if dc.outputHandlers[1].name != "WOW" {
 			valid = false
 		}
 	} else {
 		valid = false
 	}
 	if valid == false {
-		t.Error("DispatchConfig output codes read incorrectly from JSON.")
+		t.Error("DispatchConfig output names read incorrectly from JSON.")
 	}
 
 	//Dispatch rules Unmarshal test
@@ -76,11 +76,11 @@ func TestConfigFromString(t *testing.T) {
 		t.Error("DispatchConfig number of rules is off.")
 	}
 	ruleZero := dc.dispatchRules[0]
-	if string(ruleZero.Input) != "ABC" || string(ruleZero.Output.code) != "QQQ" || ruleZero.Intersect != false {
+	if string(ruleZero.Input) != "ABC" || string(ruleZero.Output.name) != "QQQ" || ruleZero.Intersect != false {
 		t.Error("Rule zero read incorrectly.")
 	}
 	ruleOne := dc.dispatchRules[1]
-	if string(ruleOne.Input) != "AAA" || string(ruleOne.Output.code) != "LLL" || ruleOne.Intersect != true {
+	if string(ruleOne.Input) != "AAA" || string(ruleOne.Output.name) != "LLL" || ruleOne.Intersect != true {
 		t.Error("Rule one read incorrectly.")
 	}
 }
@@ -114,7 +114,7 @@ func TestIsOn(t *testing.T) {
 //TODO: write tests for checking internal consistency.
 func TestNewDispatchRule(t *testing.T) {
 	dr := newDispatchRule("ALL", "AAA", true)
-	if string(dr.Input) != "ALL" || string(dr.Output.code) != "AAA" || dr.Intersect != true {
+	if string(dr.Input) != "ALL" || string(dr.Output.name) != "AAA" || dr.Intersect != true {
 		t.Error("newDispatchRule sets rule incorrectly.")
 	}
 }

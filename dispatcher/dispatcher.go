@@ -13,8 +13,8 @@ func NewDispatcherWithFile(filename string) *DispatcherLog {
 }
 
 type Event interface {
-	InputHandlerCode() string
-	SetInputHandlerCode(string)
+	InputHandlerName() string
+	SetInputHandlerName(string)
 	EventMessage() string
 }
 
@@ -26,7 +26,7 @@ func (dl *DispatcherLog) InputEvent(ev Event) {
 	if ok && outputEFromRule != nil {
 		//Need to find a pointer, not the value.
 		for _, outputEl := range dl.outputHandlers {
-			if outputEl.code == outputEFromRule.code {
+			if outputEl.name == outputEFromRule.name {
 				outputE = *outputEl
 			}
 		}
@@ -35,7 +35,7 @@ func (dl *DispatcherLog) InputEvent(ev Event) {
 	} else if ok {
 		return
 	} else {
-		panic("No output function set for output handler:" + string(outputE.code))
+		panic("No output function set for output handler:" + string(outputE.name))
 		return
 	}
 
@@ -56,7 +56,7 @@ func (dl *DispatcherLog) matchOutputHandler(ev Event) (ok bool, outputH *OutputH
 }
 
 func checkEventValidity(event Event) bool {
-	return checkInputCodeValidity(event.InputHandlerCode())
+	return checkInputNameValidity(event.InputHandlerName())
 }
 
 func (dl *DispatcherLog) routeEvent(ev Event) *OutputHandlerElement {
@@ -76,7 +76,7 @@ func (dl *DispatcherLog) routeEvent(ev Event) *OutputHandlerElement {
 }
 
 func (rule *DispatchRule) ruleMatch(ev Event) (matches, intersects bool) {
-	if ev.InputHandlerCode() != rule.Input {
+	if ev.InputHandlerName() != rule.Input {
 		return false, false
 	} else {
 		matches = true
@@ -88,7 +88,7 @@ func (rule *DispatchRule) ruleMatch(ev Event) (matches, intersects bool) {
 //TODO: add locking.
 func (dl *DispatcherLog) RegisterOutputHandler(outputHC string, handlerFunc func(Event)) error {
 	for _, outputHE := range dl.outputHandlers {
-		if outputHE.code == outputHC {
+		if outputHE.name == outputHC {
 			outputHE.eventOutput = handlerFunc
 			return nil
 		}

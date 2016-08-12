@@ -28,20 +28,20 @@ func (dc *dispatcherConfig) AddInputHandlerCode(iHanCode InputHandlerCode) error
 	return nil
 }*/
 
-func checkInputCodeValidity(inputCode string) bool {
-	if len(inputCode) != 3 {
+func checkInputNameValidity(inputName string) bool {
+	if len(inputName) != 3 {
 		return false
 	}
-	if strings.ToUpper(inputCode) != inputCode {
+	if strings.ToUpper(inputName) != inputName {
 		return false
 	}
 	return true
 }
 
 //check if this error code can be inserted into the slice (check duplicates)
-func (dc *dispatcherConfig) checkInputCodeInsertability(iHanCode string) bool {
-	for _, code := range dc.inputHandlers {
-		if code == iHanCode {
+func (dc *dispatcherConfig) checkInputCodeInsertability(iHanName string) bool {
+	for _, name := range dc.inputHandlers {
+		if name == iHanName {
 			return false
 		}
 	}

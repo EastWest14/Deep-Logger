@@ -6,7 +6,7 @@ import (
 
 func TestNew(t *testing.T) {
 	bih := NewWithDispatcherAndInputString(nil, "ABC")
-	if bih.InputHandlerCode != "ABC" {
+	if bih.InputHandlerName != "ABC" {
 		t.Error("New nandler created incorrectly.")
 	}
 }

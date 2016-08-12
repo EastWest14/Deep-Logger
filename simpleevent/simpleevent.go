@@ -3,20 +3,20 @@ package simpleevent
 import ()
 
 type SimpleEvent struct {
-	inputHandlerCode string
+	inputHandlerName string
 	message          string
 }
 
-func (se *SimpleEvent) InputHandlerCode() string {
-	return se.inputHandlerCode
+func (se *SimpleEvent) InputHandlerName() string {
+	return se.inputHandlerName
 }
 
 func (se *SimpleEvent) EventMessage() string {
 	return se.message
 }
 
-func (se *SimpleEvent) SetInputHandlerCode(inputHandlerCode string) {
-	se.inputHandlerCode = inputHandlerCode
+func (se *SimpleEvent) SetInputHandlerName(inputHandlerName string) {
+	se.inputHandlerName = inputHandlerName
 	return
 }
 

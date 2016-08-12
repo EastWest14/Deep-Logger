@@ -14,13 +14,13 @@ import (
 )
 
 const (
-	INPUT_HANDLER_CODE  = "AAA"
-	OUTPUT_HANDLER_CODE = "ZZZ"
+	INPUT_HANDLER_NAME  = "AAA"
+	OUTPUT_HANDLER_NAME = "ZZZ"
 )
 
 func TestA(t *testing.T) {
 	var buffer bytes.Buffer
-	inHandler := configureDispatcherAndHandlers("../../config/test_config.json", &buffer, INPUT_HANDLER_CODE, OUTPUT_HANDLER_CODE)
+	inHandler := configureDispatcherAndHandlers("../../config/test_config.json", &buffer, INPUT_HANDLER_NAME, OUTPUT_HANDLER_NAME)
 
 	const message = "Hello World!"
 	inHandler.LogEvent(simpleevent.New(message))
@@ -28,22 +28,22 @@ func TestA(t *testing.T) {
 	if !strings.Contains(output, message) {
 		t.Errorf("Log output doesn't contain the message: %s, instead the message is: %s", message, output)
 	}
-	if !strings.Contains(output, INPUT_HANDLER_CODE) {
-		t.Errorf("Log output doesn't contain the input code: %s, instead the message is: %s", INPUT_HANDLER_CODE, output)
+	if !strings.Contains(output, INPUT_HANDLER_NAME) {
+		t.Errorf("Log output doesn't contain the input handler name: %s, instead the message is: %s", INPUT_HANDLER_NAME, output)
 	}
 	fmt.Println(output)
 }
 
-func configureDispatcherAndHandlers(configFile string, writer io.Writer, inp_code, out_code string) *inhandl.BasicInputHandler {
+func configureDispatcherAndHandlers(configFile string, writer io.Writer, inp_name, out_name string) *inhandl.BasicInputHandler {
 	disp := dispatcher.NewDispatcherWithFile(configFile)
-	inHandler := inhandl.NewWithDispatcherAndInputString(disp, INPUT_HANDLER_CODE)
-	_ = outhandl.NewWithDispatcherAndOutputString(disp, OUTPUT_HANDLER_CODE, writer)
+	inHandler := inhandl.NewWithDispatcherAndInputString(disp, INPUT_HANDLER_NAME)
+	_ = outhandl.NewWithDispatcherAndOutputString(disp, OUTPUT_HANDLER_NAME, writer)
 	return inHandler
 }
 
 func TestIsOff(t *testing.T) {
 	iw := deeplogger.CountWriter{V: 0}
-	inHandler := configureDispatcherAndHandlers("../../config/test_config_off.json", &iw, INPUT_HANDLER_CODE, OUTPUT_HANDLER_CODE)
+	inHandler := configureDispatcherAndHandlers("../../config/test_config_off.json", &iw, INPUT_HANDLER_NAME, OUTPUT_HANDLER_NAME)
 	inHandler.LogEvent(simpleevent.New("Shouldn't go through"))
 
 	if iw.V != 0 {

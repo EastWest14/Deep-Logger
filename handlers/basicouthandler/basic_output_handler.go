@@ -8,18 +8,18 @@ import (
 
 type BasicOutputHandler struct {
 	DispatchLog       *dispatcher.DispatcherLog
-	OutputHandlerCode string
+	OutputHandlerName string
 	OutputWriter      io.Writer
 }
 
-func NewWithDispatcherAndOutputString(dl *dispatcher.DispatcherLog, outputCode string, outWriter io.Writer) *BasicOutputHandler {
-	boh := BasicOutputHandler{DispatchLog: dl, OutputHandlerCode: outputCode, OutputWriter: outWriter}
+func NewWithDispatcherAndOutputString(dl *dispatcher.DispatcherLog, outputName string, outWriter io.Writer) *BasicOutputHandler {
+	boh := BasicOutputHandler{DispatchLog: dl, OutputHandlerName: outputName, OutputWriter: outWriter}
 	boh.registerWithDispatcher()
 	return &boh
 }
 
 func (boh *BasicOutputHandler) takeInEvent(ev dispatcher.Event) {
-	evString := fmt.Sprintln("[" + ev.InputHandlerCode() + "]: " + ev.EventMessage())
+	evString := fmt.Sprintln("[" + ev.InputHandlerName() + "]: " + ev.EventMessage())
 	boh.outputData([]byte(evString))
 }
 
@@ -28,5 +28,5 @@ func (boh *BasicOutputHandler) outputData(data []byte) {
 }
 
 func (boh *BasicOutputHandler) registerWithDispatcher() {
-	boh.DispatchLog.RegisterOutputHandler(boh.OutputHandlerCode, boh.takeInEvent)
+	boh.DispatchLog.RegisterOutputHandler(boh.OutputHandlerName, boh.takeInEvent)
 }

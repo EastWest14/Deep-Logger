@@ -40,19 +40,19 @@ func configFromString(jsonStr string) *dispatcherConfig {
 	dc.name = dat["name"].(string)
 	dc.isOn = dat["isOn"].(bool)
 
-	var inCodes []interface{}
-	inCodes = dat["inputHandlers"].([]interface{})
-	for _, inCode := range inCodes {
+	var inNames []interface{}
+	inNames = dat["inputHandlers"].([]interface{})
+	for _, inName := range inNames {
 		//TODO: check validity
-		stringCode := inCode.(string)
-		dc.inputHandlers = append(dc.inputHandlers, stringCode)
+		stringName := inName.(string)
+		dc.inputHandlers = append(dc.inputHandlers, stringName)
 	}
 
-	outCodes := dat["outputHandlers"].([]interface{})
-	for _, outCode := range outCodes {
+	outNames := dat["outputHandlers"].([]interface{})
+	for _, outName := range outNames {
 		//TODO: check validity
-		stringCode := outCode.(string)
-		dc.outputHandlers = append(dc.outputHandlers, &OutputHandlerElement{stringCode, nil})
+		stringName := outName.(string)
+		dc.outputHandlers = append(dc.outputHandlers, &OutputHandlerElement{stringName, nil})
 	}
 
 	dc.dispatchRules = loadDispatchRules(dat)
@@ -107,7 +107,7 @@ func (dc *dispatcherConfig) checkConfigStateConsistency() bool {
 }
 
 type OutputHandlerElement struct {
-	code        string
+	name        string
 	eventOutput func(Event)
 }
 
@@ -117,7 +117,7 @@ type DispatchRule struct {
 	Intersect bool
 }
 
-//Input is input handler code or "ALL"
+//Input is input handler name or "ALL"
 func newDispatchRule(input, output string, intersect bool) *DispatchRule {
 	return &DispatchRule{Input: input, Output: OutputHandlerElement{output, nil}, Intersect: intersect}
 }
