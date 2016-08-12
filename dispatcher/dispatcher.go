@@ -1,6 +1,7 @@
 package dispatcher
 
 import (
+	"deeplogger/event"
 	"errors"
 )
 
@@ -12,13 +13,7 @@ func NewDispatcherWithFile(filename string) *DispatcherLog {
 	return &DispatcherLog{dispatcherConfig: configFromFile(filename)}
 }
 
-type Event interface {
-	InputHandlerName() string
-	SetInputHandlerName(string)
-	EventMessage() string
-}
-
-func (dl *DispatcherLog) InputEvent(ev Event) {
+func (dl *DispatcherLog) InputEvent(ev event.Event) {
 
 	var outputE OutputHandlerElement
 	ok, outputEFromRule := dl.matchOutputHandler(ev)
@@ -41,7 +36,7 @@ func (dl *DispatcherLog) InputEvent(ev Event) {
 
 }
 
-func (dl *DispatcherLog) matchOutputHandler(ev Event) (ok bool, outputH *OutputHandlerElement) {
+func (dl *DispatcherLog) matchOutputHandler(ev event.Event) (ok bool, outputH *OutputHandlerElement) {
 	//TODO: begin
 	//TODO: defer end
 	if !checkEventValidity(ev) {
@@ -55,11 +50,11 @@ func (dl *DispatcherLog) matchOutputHandler(ev Event) (ok bool, outputH *OutputH
 	return true, dl.routeEvent(ev)
 }
 
-func checkEventValidity(event Event) bool {
+func checkEventValidity(event event.Event) bool {
 	return checkInputNameValidity(event.InputHandlerName())
 }
 
-func (dl *DispatcherLog) routeEvent(ev Event) *OutputHandlerElement {
+func (dl *DispatcherLog) routeEvent(ev event.Event) *OutputHandlerElement {
 	//TODO: begin read
 	for _, rule := range dl.dispatchRules {
 		matches, _ := rule.ruleMatch(ev)
@@ -75,7 +70,7 @@ func (dl *DispatcherLog) routeEvent(ev Event) *OutputHandlerElement {
 	//TODO: end read.
 }
 
-func (rule *DispatchRule) ruleMatch(ev Event) (matches, intersects bool) {
+func (rule *DispatchRule) ruleMatch(ev event.Event) (matches, intersects bool) {
 	if ev.InputHandlerName() != rule.Input {
 		return false, false
 	} else {
@@ -86,7 +81,7 @@ func (rule *DispatchRule) ruleMatch(ev Event) (matches, intersects bool) {
 }
 
 //TODO: add locking.
-func (dl *DispatcherLog) RegisterOutputHandler(outputHC string, handlerFunc func(Event)) error {
+func (dl *DispatcherLog) RegisterOutputHandler(outputHC string, handlerFunc func(event.Event)) error {
 	for _, outputHE := range dl.outputHandlers {
 		if outputHE.name == outputHC {
 			outputHE.eventOutput = handlerFunc

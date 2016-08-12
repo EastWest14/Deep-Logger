@@ -2,6 +2,7 @@ package basicouthandler
 
 import (
 	"deeplogger/dispatcher"
+	"deeplogger/event"
 	"fmt"
 	"io"
 )
@@ -18,7 +19,7 @@ func NewWithDispatcherAndOutputString(dl *dispatcher.DispatcherLog, outputName s
 	return &boh
 }
 
-func (boh *BasicOutputHandler) takeInEvent(ev dispatcher.Event) {
+func (boh *BasicOutputHandler) takeInEvent(ev event.Event) {
 	evString := fmt.Sprintln("[" + ev.InputHandlerName() + "]: " + ev.EventMessage())
 	boh.outputData([]byte(evString))
 }

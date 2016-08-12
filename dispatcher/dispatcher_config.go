@@ -1,6 +1,7 @@
 package dispatcher
 
 import (
+	"deeplogger/event"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -108,7 +109,7 @@ func (dc *dispatcherConfig) checkConfigStateConsistency() bool {
 
 type OutputHandlerElement struct {
 	name        string
-	eventOutput func(Event)
+	eventOutput func(event.Event)
 }
 
 type DispatchRule struct {

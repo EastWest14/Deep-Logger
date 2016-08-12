@@ -2,6 +2,7 @@ package basicinputhandler
 
 import (
 	dispatcher "deeplogger/dispatcher"
+	"deeplogger/event"
 )
 
 type BasicInputHandler struct {
@@ -13,7 +14,7 @@ func NewWithDispatcherAndInputString(dl *dispatcher.DispatcherLog, inputName str
 	return &BasicInputHandler{DispatchLog: dl, InputHandlerName: inputName}
 }
 
-func (bih *BasicInputHandler) LogEvent(ev dispatcher.Event) {
+func (bih *BasicInputHandler) LogEvent(ev event.Event) {
 	if bih.DispatchLog == nil {
 		panic("No dispatcher registered.")
 		return

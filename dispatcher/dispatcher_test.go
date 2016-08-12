@@ -1,7 +1,7 @@
 package dispatcher
 
 import (
-	"deeplogger/simpleevent"
+	"deeplogger/event"
 	"testing"
 )
 
@@ -20,7 +20,7 @@ func TestInputEvent(t *testing.T) {
 	dl := DispatcherLog{configFromString(sampleJSON)}
 
 	v := false
-	dummyF := func(ev Event) {
+	dummyF := func(ev event.Event) {
 		v = true
 		return
 	}
@@ -29,7 +29,7 @@ func TestInputEvent(t *testing.T) {
 		t.Error(err.Error())
 	}
 
-	ev := simpleevent.New("")
+	ev := event.New("")
 	ev.SetInputHandlerName("XYZ")
 	dl.InputEvent(ev)
 	if v != true {
@@ -39,7 +39,7 @@ func TestInputEvent(t *testing.T) {
 
 func TestMatchOutputHandler(t *testing.T) {
 	dl := DispatcherLog{configFromString(sampleJSON)}
-	ev := simpleevent.New("")
+	ev := event.New("")
 	ev.SetInputHandlerName("ABC")
 	ok, outputH := dl.matchOutputHandler(ev)
 	if !ok || outputH.name != "WOW" {
@@ -65,7 +65,7 @@ func TestCheckEventValidity(t *testing.T) {
 	}
 
 	for i, aCase := range cases {
-		ev := simpleevent.New(aCase.message)
+		ev := event.New(aCase.message)
 		ev.SetInputHandlerName(aCase.inputName)
 		if chVal := checkEventValidity(ev); chVal != aCase.valid {
 			t.Errorf("Error in case %d. Expecting %v, got %v", i, aCase.valid, chVal)
@@ -75,13 +75,13 @@ func TestCheckEventValidity(t *testing.T) {
 
 func TestRouteEvent(t *testing.T) {
 	dl := DispatcherLog{configFromString(sampleJSON)}
-	ev := simpleevent.New("")
+	ev := event.New("")
 	ev.SetInputHandlerName("ABC")
 	outputHandlerEl := dl.routeEvent(ev)
 	if outputHandlerEl.name != "WOW" {
 		t.Error("Event routed incorrectly.")
 	}
-	ev = simpleevent.New("")
+	ev = event.New("")
 	ev.SetInputHandlerName("XYZ")
 	outputHandlerEl = dl.routeEvent(ev)
 	if outputHandlerEl.name != "LOL" {
@@ -93,7 +93,7 @@ func TestRegisterOutputHandler(t *testing.T) {
 	dc := configFromFile("../config/little_config.json")
 	dl := DispatcherLog{dispatcherConfig: dc}
 	v := false
-	dummyF := func(ev Event) {
+	dummyF := func(ev event.Event) {
 		v = true
 		return
 	}
@@ -102,7 +102,7 @@ func TestRegisterOutputHandler(t *testing.T) {
 		t.Error(err.Error())
 	}
 
-	ev := simpleevent.New("")
+	ev := event.New("")
 	ev.SetInputHandlerName("XYZ")
 	dl.InputEvent(ev)
 	if v != true {

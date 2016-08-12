@@ -1,7 +1,7 @@
 package basicouthandler
 
 import (
-	"deeplogger/simpleevent"
+	"deeplogger/event"
 	"os"
 	"testing"
 )
@@ -9,7 +9,7 @@ import (
 func TestTakeInEvent(t *testing.T) {
 	boh := BasicOutputHandler{DispatchLog: nil, OutputHandlerName: "ABC", OutputWriter: os.Stdout}
 
-	ev := simpleevent.New("Hello world!")
+	ev := event.New("Hello world!")
 	ev.SetInputHandlerName("XYZ")
 	boh.takeInEvent(ev)
 }

@@ -1,6 +1,12 @@
-package simpleevent
+package event
 
 import ()
+
+type Event interface {
+	InputHandlerName() string
+	SetInputHandlerName(string)
+	EventMessage() string
+}
 
 type SimpleEvent struct {
 	inputHandlerName string
