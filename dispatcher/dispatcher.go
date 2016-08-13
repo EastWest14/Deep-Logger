@@ -7,6 +7,7 @@ import (
 
 type DispatcherLog struct {
 	*dispatcherConfig
+	DName string //TODO: rename to name
 }
 
 func NewDispatcherWithFile(filename string) *DispatcherLog {
@@ -87,7 +88,18 @@ func (dl *DispatcherLog) RegisterOutputHandler(outputHC string, handlerFunc func
 			outputHE.eventOutput = handlerFunc
 			return nil
 		}
-
 	}
 	return errors.New("Failed to register output handler.")
+}
+
+func New() *DispatcherLog {
+	return &DispatcherLog{}
+}
+
+func (dl *DispatcherLog) Name() string {
+	return dl.DName
+}
+
+func (dl *DispatcherLog) SetName(dispName string) {
+	dl.DName = dispName
 }
