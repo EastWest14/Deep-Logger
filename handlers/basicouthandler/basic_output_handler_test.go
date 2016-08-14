@@ -11,5 +11,5 @@ func TestTakeInEvent(t *testing.T) {
 
 	ev := event.New("Hello world!")
 	ev.SetInputHandlerName("XYZ")
-	boh.takeInEvent(ev)
+	boh.TakeInEvent(ev)
 }

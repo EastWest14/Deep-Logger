@@ -9,13 +9,14 @@ import (
 
 func ConstructLoggerFromConfig(config string) (inputHandlers map[string]handlers.InputHandler, disp *dispatcher.Dispatcher, outputHandlers map[string]handlers.OutputHandler) {
 	disp = dispatcher.NewWithName("")
-	//log.Fatal("here")
-
+	inputHandlers = map[string]handlers.InputHandler{}
+	outputHandlers = map[string]handlers.OutputHandler{}
 	var dat map[string]interface{}
 	err := json.Unmarshal([]byte(config), &dat)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+
 	disp.SetName(dat["dispatcher_name"].(string))
 
 	isOn := dat["isOn"].(bool)
@@ -28,23 +29,38 @@ func ConstructLoggerFromConfig(config string) (inputHandlers map[string]handlers
 	var inNames []interface{}
 	inNames = dat["inputHandlers"].([]interface{})
 	for _, inName := range inNames {
-		//TODO: check validity
+		//modifying dispatcher
 		stringName := inName.(string)
 		disp.AddInputHandler(stringName, true) //TODO: is on?
+
+		//creating handlers
+		handl := handlers.CreateInputHandler(stringName)
+		handl.SetDispatcher(disp)
+		if _, present := inputHandlers[stringName]; present {
+			panic("Attempt to ad duplicate input handlers.")
+		}
+		inputHandlers[stringName] = handl
 	}
 
 	outNames := dat["outputHandlers"].([]interface{})
 	for _, outName := range outNames {
-		//TODO: check validity
+		//Modifying dispatcher
 		stringName := outName.(string)
 		disp.AddOutputHandler(stringName)
+
+		//Creating handlers
+		handl := handlers.NewOutputHandler(disp, stringName)
+		if _, present := outputHandlers[stringName]; present {
+			panic("Attempt to ad duplicate output handlers.")
+		}
+		outputHandlers[stringName] = handl
 	}
 	/*
 		dc.dispatchRules = loadDispatchRules(dat)
 
 		//return &dc
 	*/
-	return nil, disp, nil
+	return inputHandlers, disp, outputHandlers
 }
 
 /*

@@ -15,7 +15,7 @@ const config = `{"dispatcher_name": "DISP1",
 }`
 
 func TestConstructLoggerFromConfig(t *testing.T) {
-	_, disp, _ := ConstructLoggerFromConfig(config)
+	inpHandl, disp, outHandl := ConstructLoggerFromConfig(config)
 	if disp.Name() != "DISP1" {
 		t.Error("Dispatcher name read incorrectly.")
 	}
@@ -23,15 +23,32 @@ func TestConstructLoggerFromConfig(t *testing.T) {
 		t.Error("Dispatcher should be on.")
 	}
 	if exists, _ := disp.HasInputHandler("AAA"); !exists {
-		t.Error("Input handler not created.")
+		t.Error("Input handler not created in dispatcher.")
 	}
 	if exists, _ := disp.HasInputHandler("BBB"); !exists {
-		t.Error("Input handler not created.")
+		t.Error("Input handler not created in dispatcher.")
 	}
 	if exists := disp.HasOutputHandler("YYY"); !exists {
-		t.Error("Output handler not created.")
+		t.Error("Output handler not created in dispatcher.")
 	}
 	if exists := disp.HasOutputHandler("ZZZ"); !exists {
+		t.Error("Output handler not created in dispatcher.")
+	}
+
+	if _, exists := inpHandl["AAA"]; !exists {
+		t.Error("Input handler not created.")
+	}
+	if _, exists := inpHandl["BBB"]; !exists {
+		t.Error("Input handler not created.")
+	}
+	if _, exists := inpHandl["ZZZ"]; exists {
+		t.Error("Input handler created for wrong key.")
+	}
+
+	if _, exists := outHandl["ZZZ"]; !exists {
+		t.Error("Output handler not created.")
+	}
+	if _, exists := outHandl["YYY"]; !exists {
 		t.Error("Output handler not created.")
 	}
 }

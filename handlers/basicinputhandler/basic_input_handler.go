@@ -1,17 +1,23 @@
 package basicinputhandler
 
 import (
-	dispatcher "deeplogger/dispatcher"
+	olddispatcher "deeplogger/dispatcher"
 	"deeplogger/event"
+	dispatcher "deeplogger/newdispatcher"
 )
 
 type BasicInputHandler struct {
-	DispatchLog      *dispatcher.DispatcherLog
+	DispatchLog      *olddispatcher.DispatcherLog
+	Dispatcher       *dispatcher.Dispatcher
 	InputHandlerName string
 }
 
-func NewWithDispatcherAndInputString(dl *dispatcher.DispatcherLog, inputName string) *BasicInputHandler {
+func NewWithDispatcherAndInputString(dl *olddispatcher.DispatcherLog, inputName string) *BasicInputHandler {
 	return &BasicInputHandler{DispatchLog: dl, InputHandlerName: inputName}
+}
+
+func (bih *BasicInputHandler) SetDispatcher(d *dispatcher.Dispatcher) {
+	bih.Dispatcher = d
 }
 
 func (bih *BasicInputHandler) LogEvent(ev event.Event) {
