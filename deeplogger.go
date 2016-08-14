@@ -1,14 +1,14 @@
 package deeplogger
 
 import (
-	"deeplogger/dispatcher"
 	"deeplogger/handlers"
+	dispatcher "deeplogger/newdispatcher"
 	"encoding/json"
 	"log"
 )
 
-func ConstructLoggerFromConfig(config string) (inputHandlers map[string]handlers.InputHandler, disp *dispatcher.DispatcherLog, outputHandlers map[string]handlers.OutputHandler) {
-	disp = dispatcher.NewDispatcherWithFile("config/empty_config.json") //TODO: just new.
+func ConstructLoggerFromConfig(config string) (inputHandlers map[string]handlers.InputHandler, disp *dispatcher.Dispatcher, outputHandlers map[string]handlers.OutputHandler) {
+	disp = dispatcher.NewWithName("")
 	//log.Fatal("here")
 
 	var dat map[string]interface{}
@@ -30,16 +30,16 @@ func ConstructLoggerFromConfig(config string) (inputHandlers map[string]handlers
 	for _, inName := range inNames {
 		//TODO: check validity
 		stringName := inName.(string)
-		disp.AddInputHandler(stringName)
+		disp.AddInputHandler(stringName, true) //TODO: is on?
+	}
+
+	outNames := dat["outputHandlers"].([]interface{})
+	for _, outName := range outNames {
+		//TODO: check validity
+		stringName := outName.(string)
+		disp.AddOutputHandler(stringName)
 	}
 	/*
-		outNames := dat["outputHandlers"].([]interface{})
-		for _, outName := range outNames {
-			//TODO: check validity
-			stringName := outName.(string)
-			dc.outputHandlers = append(dc.outputHandlers, &OutputHandlerElement{stringName, nil})
-		}
-
 		dc.dispatchRules = loadDispatchRules(dat)
 
 		//return &dc

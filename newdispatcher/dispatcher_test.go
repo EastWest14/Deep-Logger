@@ -39,3 +39,11 @@ func TestHasInputHandler(t *testing.T) {
 		t.Error("HasInputHandler returns false answer or isOn is false.")
 	}
 }
+
+func TestAddOutputHandler(t *testing.T) {
+	disp := NewWithName("Test")
+	disp.AddOutputHandler("A")
+	if _, ok := disp.outputHandlers["A"]; !ok {
+		t.Error("Output handler not created correctly.")
+	}
+}
