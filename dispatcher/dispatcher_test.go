@@ -17,7 +17,7 @@ var sampleJSON = `
 	`
 
 func TestInputEvent(t *testing.T) {
-	dl := DispatcherLog{configFromString(sampleJSON)}
+	dl := DispatcherLog{configFromString(sampleJSON), "LALALA"}
 
 	v := false
 	dummyF := func(ev event.Event) {
@@ -38,7 +38,7 @@ func TestInputEvent(t *testing.T) {
 }
 
 func TestMatchOutputHandler(t *testing.T) {
-	dl := DispatcherLog{configFromString(sampleJSON)}
+	dl := DispatcherLog{configFromString(sampleJSON), "LALALA"}
 	ev := event.New("")
 	ev.SetInputHandlerName("ABC")
 	ok, outputH := dl.matchOutputHandler(ev)
@@ -74,7 +74,7 @@ func TestCheckEventValidity(t *testing.T) {
 }
 
 func TestRouteEvent(t *testing.T) {
-	dl := DispatcherLog{configFromString(sampleJSON)}
+	dl := DispatcherLog{configFromString(sampleJSON), "LALALA"}
 	ev := event.New("")
 	ev.SetInputHandlerName("ABC")
 	outputHandlerEl := dl.routeEvent(ev)

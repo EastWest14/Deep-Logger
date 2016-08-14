@@ -103,3 +103,7 @@ func (dl *DispatcherLog) Name() string {
 func (dl *DispatcherLog) SetName(dispName string) {
 	dl.DName = dispName
 }
+
+func (dl *DispatcherLog) AddInputHandler(handlerName string) {
+	dl.inputHandlers = append(dl.inputHandlers, handlerName)
+}

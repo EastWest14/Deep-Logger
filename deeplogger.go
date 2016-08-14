@@ -8,7 +8,8 @@ import (
 )
 
 func ConstructLoggerFromConfig(config string) (inputHandlers map[string]handlers.InputHandler, disp *dispatcher.DispatcherLog, outputHandlers map[string]handlers.OutputHandler) {
-	disp = dispatcher.New()
+	disp = dispatcher.NewDispatcherWithFile("config/empty_config.json") //TODO: just new.
+	//log.Fatal("here")
 
 	var dat map[string]interface{}
 	err := json.Unmarshal([]byte(config), &dat)
@@ -16,17 +17,22 @@ func ConstructLoggerFromConfig(config string) (inputHandlers map[string]handlers
 		log.Fatal(err.Error())
 	}
 	disp.SetName(dat["dispatcher_name"].(string))
+
+	isOn := dat["isOn"].(bool)
+	if isOn {
+		disp.TurnOn()
+	} else {
+		disp.TurnOff()
+	}
+
+	var inNames []interface{}
+	inNames = dat["inputHandlers"].([]interface{})
+	for _, inName := range inNames {
+		//TODO: check validity
+		stringName := inName.(string)
+		disp.AddInputHandler(stringName)
+	}
 	/*
-		dc.isOn = dat["isOn"].(bool)
-
-		var inNames []interface{}
-		inNames = dat["inputHandlers"].([]interface{})
-		for _, inName := range inNames {
-			//TODO: check validity
-			stringName := inName.(string)
-			dc.inputHandlers = append(dc.inputHandlers, stringName)
-		}
-
 		outNames := dat["outputHandlers"].([]interface{})
 		for _, outName := range outNames {
 			//TODO: check validity

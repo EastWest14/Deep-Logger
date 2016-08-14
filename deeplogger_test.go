@@ -19,4 +19,8 @@ func TestConstructLoggerFromConfig(t *testing.T) {
 	if disp.Name() != "DISP1" {
 		t.Error("Dispatcher name read incorrectly.")
 	}
+	if disp.IsOn() != true {
+		t.Error("Dispatcher should be on.")
+	}
+
 }
