@@ -10,7 +10,7 @@ type BasicInputHandler struct {
 	InputHandlerName string
 }
 
-func NewWithDispatcherAndInputString(dl *dispatcher.Dispatcher, inputName string) *BasicInputHandler {
+func New(dl *dispatcher.Dispatcher, inputName string) *BasicInputHandler {
 	return &BasicInputHandler{Dispatcher: dl, InputHandlerName: inputName}
 }
 

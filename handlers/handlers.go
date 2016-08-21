@@ -15,7 +15,7 @@ type InputHandler interface {
 
 //TODO: add type enumeration.
 func CreateInputHandler(name string) InputHandler {
-	return bih.NewWithDispatcherAndInputString(nil, name)
+	return bih.New(nil, name)
 } //TODO: rename function.
 
 type OutputHandler interface {

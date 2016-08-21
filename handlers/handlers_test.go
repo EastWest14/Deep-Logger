@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-var _ InputHandler = bih.NewWithDispatcherAndInputString(nil, "")
+var _ InputHandler = bih.New(nil, "")
 
 func TestBIH(t *testing.T) {
 

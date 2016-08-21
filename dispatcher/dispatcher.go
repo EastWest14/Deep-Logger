@@ -95,7 +95,7 @@ type DispatchRule struct {
 	OutputHandlerName string
 }
 
-func (dr *DispatchRule) String() string {
+func (dr *DispatchRule) string() string {
 	return fmt.Sprintln("Rule has input=" + dr.MatchCond.InputHandlerName + ", output=" + dr.OutputHandlerName)
 }
 
