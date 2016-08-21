@@ -51,4 +51,7 @@ func TestConstructLoggerFromConfig(t *testing.T) {
 	if _, exists := outHandl["YYY"]; !exists {
 		t.Error("Output handler not created.")
 	}
+	if _, exists := outHandl["nope"]; exists {
+		t.Error("Output handler test false positive.")
+	}
 }

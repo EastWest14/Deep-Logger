@@ -24,6 +24,7 @@ func NewWithDispatcherAndOutputString(dl *olddispatcher.DispatcherLog, outputNam
 
 func New(disp *dispatcher.Dispatcher, name string) *BasicOutputHandler {
 	boh := BasicOutputHandler{Dispatcher: disp, OutputHandlerName: name}
+	disp.AddOutputHandler(boh.OutputHandlerName, boh.TakeInEvent)
 	//boh.registerWithDispatcher()
 	//TODO: uncomment!
 	return &boh

@@ -43,9 +43,38 @@ func TestHasInputHandler(t *testing.T) {
 
 func TestAddOutputHandler(t *testing.T) {
 	disp := NewWithName("Test")
-	disp.AddOutputHandler("A")
-	if _, ok := disp.outputHandlers["A"]; !ok {
+	disp.AddOutputHandler("A", func(ev event.Event) {
+	})
+	if _, funcVar := disp.outputHandlers["A"]; !funcVar {
 		t.Error("Output handler not created correctly.")
+	}
+}
+
+func TestInputEvent(t *testing.T) {
+	disp := NewWithName("Test")
+	disp.AddInputHandler("input1", true)
+	disp.AddInputHandler("input2", false)
+	hit := false
+	disp.AddOutputHandler("output1", func(ev event.Event) {
+		hit = true
+	})
+	dr := NewRule(NewMatchCondWithName("input1"), "output1")
+	disp.AddDispatchRule(dr)
+	dr = NewRule(NewMatchCondWithName("input2"), "output1")
+	disp.AddDispatchRule(dr)
+
+	ev := event.New("")
+	ev.SetInputHandlerName("input1")
+	disp.InputEvent(ev)
+	if !hit {
+		t.Error("Event didn't route.")
+	}
+
+	hit = false
+	ev.SetInputHandlerName("input2")
+	disp.InputEvent(ev)
+	if !hit {
+		t.Error("Event didn't route.")
 	}
 }
 

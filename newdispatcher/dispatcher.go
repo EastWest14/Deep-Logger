@@ -9,12 +9,12 @@ type Dispatcher struct {
 	name           string
 	on             bool
 	inputHandlers  map[string]bool
-	outputHandlers map[string]interface{}
+	outputHandlers map[string]func(ev event.Event)
 	rules          []*DispatchRule
 }
 
 func NewWithName(name string) *Dispatcher {
-	return &Dispatcher{name: name, inputHandlers: map[string]bool{}, outputHandlers: map[string]interface{}{}}
+	return &Dispatcher{name: name, inputHandlers: map[string]bool{}, outputHandlers: map[string]func(ev event.Event){}}
 }
 
 func (d *Dispatcher) Name() string {
@@ -50,11 +50,11 @@ func (d *Dispatcher) HasInputHandler(name string) (exists, isOn bool) {
 	return
 }
 
-func (d *Dispatcher) AddOutputHandler(name string) {
+func (d *Dispatcher) AddOutputHandler(name string, handler func(ev event.Event)) {
 	if _, ok := d.outputHandlers[name]; ok {
 		panic("Attempt to add a duplicate output handler.")
 	} else {
-		d.outputHandlers[name] = true
+		d.outputHandlers[name] = handler
 	}
 }
 
@@ -65,7 +65,21 @@ func (d *Dispatcher) HasOutputHandler(name string) bool {
 
 func (d *Dispatcher) AddDispatchRule(rule *DispatchRule) {
 	d.rules = append(d.rules, rule)
-	rule.String()
+}
+
+func (d *Dispatcher) InputEvent(ev event.Event) {
+	for _, rule := range d.rules {
+		if rule.matchesEvent(ev) {
+			handlerFunc, ok := d.outputHandlers[rule.OutputHandlerName]
+			if !ok {
+				panic("Output handler not found.")
+			} else if handlerFunc == nil {
+				panic("No handler func for routed event.")
+			}
+			handlerFunc(ev)
+			break
+		}
+	}
 }
 
 type MatchCondition struct {
@@ -81,8 +95,8 @@ type DispatchRule struct {
 	OutputHandlerName string
 }
 
-func (dr *DispatchRule) String() {
-	fmt.Println("Rule has input=" + dr.MatchCond.InputHandlerName + ", output=" + dr.OutputHandlerName)
+func (dr *DispatchRule) String() string {
+	return fmt.Sprintln("Rule has input=" + dr.MatchCond.InputHandlerName + ", output=" + dr.OutputHandlerName)
 }
 
 func NewRule(matchCond MatchCondition, outHandlerName string) *DispatchRule {

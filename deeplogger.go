@@ -44,10 +44,7 @@ func ConstructLoggerFromConfig(config string) (inputHandlers map[string]handlers
 
 	outNames := dat["outputHandlers"].([]interface{})
 	for _, outName := range outNames {
-		//Modifying dispatcher
 		stringName := outName.(string)
-		disp.AddOutputHandler(stringName)
-
 		//Creating handlers
 		handl := handlers.NewOutputHandler(disp, stringName)
 		if _, present := outputHandlers[stringName]; present {
