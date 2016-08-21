@@ -2,108 +2,107 @@ package dispatcher
 
 import (
 	"deeplogger/event"
-	"errors"
+	"fmt"
 )
 
-type DispatcherLog struct {
-	*dispatcherConfig
-	DName string //TODO: rename to name
+type Dispatcher struct {
+	name           string
+	on             bool
+	inputHandlers  map[string]bool
+	outputHandlers map[string]func(ev event.Event)
+	rules          []*DispatchRule
 }
 
-func NewDispatcherWithFile(filename string) *DispatcherLog {
-	return &DispatcherLog{dispatcherConfig: configFromFile(filename)}
+func NewWithName(name string) *Dispatcher {
+	return &Dispatcher{name: name, inputHandlers: map[string]bool{}, outputHandlers: map[string]func(ev event.Event){}}
 }
 
-func (dl *DispatcherLog) InputEvent(ev event.Event) {
+func (d *Dispatcher) Name() string {
+	return d.name
+}
 
-	var outputE OutputHandlerElement
-	ok, outputEFromRule := dl.matchOutputHandler(ev)
+func (d *Dispatcher) SetName(name string) {
+	d.name = name
+}
 
-	if ok && outputEFromRule != nil {
-		//Need to find a pointer, not the value.
-		for _, outputEl := range dl.outputHandlers {
-			if outputEl.name == outputEFromRule.name {
-				outputE = *outputEl
+func (d *Dispatcher) IsOn() bool {
+	return d.on
+}
+
+func (d *Dispatcher) TurnOn() {
+	d.on = true
+}
+
+func (d *Dispatcher) TurnOff() {
+	d.on = false
+}
+
+func (d *Dispatcher) AddInputHandler(name string, on bool) {
+	if _, ok := d.inputHandlers[name]; ok {
+		panic("Attempt to add a duplicate input handler.")
+	} else {
+		d.inputHandlers[name] = on
+	}
+}
+
+func (d *Dispatcher) HasInputHandler(name string) (exists, isOn bool) {
+	isOn, exists = d.inputHandlers[name]
+	return
+}
+
+func (d *Dispatcher) AddOutputHandler(name string, handler func(ev event.Event)) {
+	if _, ok := d.outputHandlers[name]; ok {
+		panic("Attempt to add a duplicate output handler.")
+	} else {
+		d.outputHandlers[name] = handler
+	}
+}
+
+func (d *Dispatcher) HasOutputHandler(name string) bool {
+	_, exists := d.outputHandlers[name]
+	return exists
+}
+
+func (d *Dispatcher) AddDispatchRule(rule *DispatchRule) {
+	d.rules = append(d.rules, rule)
+}
+
+func (d *Dispatcher) InputEvent(ev event.Event) {
+	for _, rule := range d.rules {
+		if rule.matchesEvent(ev) {
+			handlerFunc, ok := d.outputHandlers[rule.OutputHandlerName]
+			if !ok {
+				panic("Output handler not found.")
+			} else if handlerFunc == nil {
+				panic("No handler func for routed event.")
 			}
-		}
-		outputE.eventOutput(ev)
-		return
-	} else if ok {
-		return
-	} else {
-		panic("No output function set for output handler:" + string(outputE.name))
-		return
-	}
-
-}
-
-func (dl *DispatcherLog) matchOutputHandler(ev event.Event) (ok bool, outputH *OutputHandlerElement) {
-	//TODO: begin
-	//TODO: defer end
-	if !checkEventValidity(ev) {
-		panic("event is invalid!")
-	}
-	if !dl.isOn {
-		ok = true
-		outputH = nil
-		return
-	}
-	return true, dl.routeEvent(ev)
-}
-
-func checkEventValidity(event event.Event) bool {
-	return checkInputNameValidity(event.InputHandlerName())
-}
-
-func (dl *DispatcherLog) routeEvent(ev event.Event) *OutputHandlerElement {
-	//TODO: begin read
-	for _, rule := range dl.dispatchRules {
-		matches, _ := rule.ruleMatch(ev)
-		if !matches {
-			continue
-		} else {
-			return &rule.Output
-		}
-		//TODO: non-intersecting rules not implemented yet.
-	}
-	panic("Can't route event")
-	return nil
-	//TODO: end read.
-}
-
-func (rule *DispatchRule) ruleMatch(ev event.Event) (matches, intersects bool) {
-	if ev.InputHandlerName() != rule.Input {
-		return false, false
-	} else {
-		matches = true
-		intersects = rule.Intersect
-		return
-	}
-}
-
-//TODO: add locking.
-func (dl *DispatcherLog) RegisterOutputHandler(outputHC string, handlerFunc func(event.Event)) error {
-	for _, outputHE := range dl.outputHandlers {
-		if outputHE.name == outputHC {
-			outputHE.eventOutput = handlerFunc
-			return nil
+			handlerFunc(ev)
+			break
 		}
 	}
-	return errors.New("Failed to register output handler.")
 }
 
-func New() *DispatcherLog {
-	return &DispatcherLog{}
+type MatchCondition struct {
+	InputHandlerName string
 }
 
-func (dl *DispatcherLog) Name() string {
-	return dl.DName
+func NewMatchCondWithName(inputHandlerName string) MatchCondition {
+	return MatchCondition{InputHandlerName: inputHandlerName}
 }
 
-func (dl *DispatcherLog) SetName(dispName string) {
-	dl.DName = dispName
+type DispatchRule struct {
+	MatchCond         MatchCondition
+	OutputHandlerName string
 }
 
-func (dl *DispatcherLog) AddInputHandler(handlerName string) {
-	dl.inputHandlers = append(dl.inputHandlers, handlerName)
+func (dr *DispatchRule) String() string {
+	return fmt.Sprintln("Rule has input=" + dr.MatchCond.InputHandlerName + ", output=" + dr.OutputHandlerName)
+}
+
+func NewRule(matchCond MatchCondition, outHandlerName string) *DispatchRule {
+	return &DispatchRule{MatchCond: matchCond, OutputHandlerName: outHandlerName}
+}
+
+func (dr *DispatchRule) matchesEvent(ev event.Event) bool {
+	return ev.InputHandlerName() == dr.MatchCond.InputHandlerName
 }

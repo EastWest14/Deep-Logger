@@ -1,32 +1,21 @@
 package basicouthandler
 
 import (
-	olddispatcher "deeplogger/dispatcher"
+	"deeplogger/dispatcher"
 	"deeplogger/event"
-	dispatcher "deeplogger/newdispatcher"
 	"fmt"
 	"io"
 )
 
 type BasicOutputHandler struct {
-	DispatchLog       *olddispatcher.DispatcherLog
 	Dispatcher        *dispatcher.Dispatcher
 	OutputHandlerName string
 	OutputWriter      io.Writer
 }
 
-//TODO: rename.
-func NewWithDispatcherAndOutputString(dl *olddispatcher.DispatcherLog, outputName string, outWriter io.Writer) *BasicOutputHandler {
-	boh := BasicOutputHandler{DispatchLog: dl, OutputHandlerName: outputName, OutputWriter: outWriter}
-	boh.registerWithDispatcher()
-	return &boh
-}
-
 func New(disp *dispatcher.Dispatcher, name string) *BasicOutputHandler {
 	boh := BasicOutputHandler{Dispatcher: disp, OutputHandlerName: name}
 	disp.AddOutputHandler(boh.OutputHandlerName, boh.TakeInEvent)
-	//boh.registerWithDispatcher()
-	//TODO: uncomment!
 	return &boh
 }
 
@@ -41,8 +30,4 @@ func (boh *BasicOutputHandler) TakeInEvent(ev event.Event) {
 
 func (boh *BasicOutputHandler) outputData(data []byte) {
 	boh.OutputWriter.Write(data)
-}
-
-func (boh *BasicOutputHandler) registerWithDispatcher() {
-	boh.DispatchLog.RegisterOutputHandler(boh.OutputHandlerName, boh.TakeInEvent)
 }

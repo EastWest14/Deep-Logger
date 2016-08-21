@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"deeplogger/dispatcher"
 	"deeplogger/event"
 	bih "deeplogger/handlers/basicinputhandler"
 	boh "deeplogger/handlers/basicouthandler"
-	dispatcher "deeplogger/newdispatcher"
 	"io"
 )
 

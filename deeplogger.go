@@ -1,8 +1,8 @@
 package deeplogger
 
 import (
+	dispatcher "deeplogger/dispatcher"
 	"deeplogger/handlers"
-	dispatcher "deeplogger/newdispatcher"
 	"encoding/json"
 	"log"
 )

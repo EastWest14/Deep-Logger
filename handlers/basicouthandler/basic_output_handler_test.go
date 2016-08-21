@@ -7,7 +7,7 @@ import (
 )
 
 func TestTakeInEvent(t *testing.T) {
-	boh := BasicOutputHandler{DispatchLog: nil, OutputHandlerName: "ABC", OutputWriter: os.Stdout}
+	boh := BasicOutputHandler{Dispatcher: nil, OutputHandlerName: "ABC", OutputWriter: os.Stdout}
 
 	ev := event.New("Hello world!")
 	ev.SetInputHandlerName("XYZ")
