@@ -70,6 +70,13 @@ func TestMain(m *testing.M) {
 	}
 }
 
+func TestName(t *testing.T) {
+	const expectedName = "Dispatcher"
+	if disp.Name() != expectedName {
+		t.Errorf("Expected dispatcher name to be %s, got %s", expectedName, disp.Name())
+	}
+}
+
 func TestLoggingEvents(t *testing.T) {
 	cases := []struct {
 		inpHandlerCode string

@@ -65,23 +65,6 @@ func ConstructLoggerFromConfig(config string) (inputHandlers map[string]handlers
 	return inputHandlers, disp, outputHandlers
 }
 
-/*
-func loadDispatchRules(dat map[string]interface{}) []DispatchRule {
-	var dispatchRules []DispatchRule
-
-	var dispatchRulesData []interface{}
-	dispatchRulesData = dat["dispatchRules"].([]interface{})
-	for _, dispRule := range dispatchRulesData {
-		dRule := dispRule.(map[string]interface{})
-		input := dRule["input"].(string)
-		output := dRule["output"].(string)
-		intersect := dRule["intersect"].(bool)
-
-		dispatchRules = append(dispatchRules, *newDispatchRule(input, output, intersect))
-	}
-	return dispatchRules
-}*/
-
 type CountWriter struct {
 	V int
 }
