@@ -1,6 +1,7 @@
 package newdispatcher
 
 import (
+	"deeplogger/event"
 	"testing"
 )
 
@@ -45,5 +46,21 @@ func TestAddOutputHandler(t *testing.T) {
 	disp.AddOutputHandler("A")
 	if _, ok := disp.outputHandlers["A"]; !ok {
 		t.Error("Output handler not created correctly.")
+	}
+}
+
+func TestMatchesEvent(t *testing.T) {
+	dr := NewRule(NewMatchCondWithName("input"), "output")
+	ev := event.New("")
+	ev.SetInputHandlerName("input")
+	ev2 := event.New("")
+	ev2.SetInputHandlerName("wrong")
+	match := dr.matchesEvent(ev)
+	if match != true {
+		t.Error("Rule doesn't match, should match.")
+	}
+	match = dr.matchesEvent(ev2)
+	if match == true {
+		t.Error("Rule does match, shouldn't match.")
 	}
 }

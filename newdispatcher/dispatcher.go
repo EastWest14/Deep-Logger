@@ -1,10 +1,16 @@
 package newdispatcher
 
+import (
+	"deeplogger/event"
+	"fmt"
+)
+
 type Dispatcher struct {
 	name           string
 	on             bool
 	inputHandlers  map[string]bool
 	outputHandlers map[string]interface{}
+	rules          []*DispatchRule
 }
 
 func NewWithName(name string) *Dispatcher {
@@ -55,4 +61,34 @@ func (d *Dispatcher) AddOutputHandler(name string) {
 func (d *Dispatcher) HasOutputHandler(name string) bool {
 	_, exists := d.outputHandlers[name]
 	return exists
+}
+
+func (d *Dispatcher) AddDispatchRule(rule *DispatchRule) {
+	d.rules = append(d.rules, rule)
+	rule.String()
+}
+
+type MatchCondition struct {
+	InputHandlerName string
+}
+
+func NewMatchCondWithName(inputHandlerName string) MatchCondition {
+	return MatchCondition{InputHandlerName: inputHandlerName}
+}
+
+type DispatchRule struct {
+	MatchCond         MatchCondition
+	OutputHandlerName string
+}
+
+func (dr *DispatchRule) String() {
+	fmt.Println("Rule has input=" + dr.MatchCond.InputHandlerName + ", output=" + dr.OutputHandlerName)
+}
+
+func NewRule(matchCond MatchCondition, outHandlerName string) *DispatchRule {
+	return &DispatchRule{MatchCond: matchCond, OutputHandlerName: outHandlerName}
+}
+
+func (dr *DispatchRule) matchesEvent(ev event.Event) bool {
+	return ev.InputHandlerName() == dr.MatchCond.InputHandlerName
 }

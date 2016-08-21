@@ -55,11 +55,16 @@ func ConstructLoggerFromConfig(config string) (inputHandlers map[string]handlers
 		}
 		outputHandlers[stringName] = handl
 	}
-	/*
-		dc.dispatchRules = loadDispatchRules(dat)
 
-		//return &dc
-	*/
+	//TODO: find a way to automatically test
+	dispatchRulesData := dat["dispatchRules"].([]interface{})
+	for _, dispRule := range dispatchRulesData {
+		dRule := dispRule.(map[string]interface{})
+		input := dRule["input"].(string)
+		output := dRule["output"].(string)
+		disp.AddDispatchRule(dispatcher.NewRule(dispatcher.NewMatchCondWithName(input), output))
+	}
+
 	return inputHandlers, disp, outputHandlers
 }
 
