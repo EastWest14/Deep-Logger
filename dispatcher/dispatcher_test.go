@@ -5,16 +5,16 @@ import (
 	"testing"
 )
 
-func TestNewWithName(t *testing.T) {
+func TestNew(t *testing.T) {
 	const name = "D1"
-	disp := NewWithName(name)
+	disp := New(name)
 	if disp.name != name {
 		t.Errorf("Expected name %s, got %s", name, disp.name)
 	}
 }
 
 func TestAddInputHandler(t *testing.T) {
-	disp := NewWithName("Test")
+	disp := New("Test")
 	disp.AddInputHandler("A", true)
 	disp.AddInputHandler("B", false)
 	if disp.inputHandlers["A"] != true {
@@ -27,7 +27,7 @@ func TestAddInputHandler(t *testing.T) {
 }
 
 func TestHasInputHandler(t *testing.T) {
-	disp := NewWithName("Test")
+	disp := New("Test")
 	if exists, isOn := disp.HasInputHandler("nope"); exists != false || isOn != false {
 		t.Error("HasInputHandler returns false positive or isOn is true for non-existing handler.")
 	}
@@ -42,7 +42,7 @@ func TestHasInputHandler(t *testing.T) {
 }
 
 func TestAddOutputHandler(t *testing.T) {
-	disp := NewWithName("Test")
+	disp := New("Test")
 	disp.AddOutputHandler("A", func(ev event.Event) {
 	})
 	if _, funcVar := disp.outputHandlers["A"]; !funcVar {
@@ -51,17 +51,17 @@ func TestAddOutputHandler(t *testing.T) {
 }
 
 func TestInputEvent(t *testing.T) {
-	disp := NewWithName("Test")
+	disp := New("Test")
 	disp.AddInputHandler("input1", true)
 	disp.AddInputHandler("input2", false)
 	hit := false
 	disp.AddOutputHandler("output1", func(ev event.Event) {
 		hit = true
 	})
-	dr := NewRule(NewMatchCondWithName("input1"), "output1")
-	disp.AddDispatchRule(dr)
-	dr = NewRule(NewMatchCondWithName("input2"), "output1")
-	disp.AddDispatchRule(dr)
+	dr := NewRule(NewMatchCondition("input1"), "output1")
+	disp.AddRule(dr)
+	dr = NewRule(NewMatchCondition("input2"), "output1")
+	disp.AddRule(dr)
 
 	ev := event.New("")
 	ev.SetInputHandlerName("input1")
@@ -79,7 +79,7 @@ func TestInputEvent(t *testing.T) {
 }
 
 func TestMatchesEvent(t *testing.T) {
-	dr := NewRule(NewMatchCondWithName("input"), "output")
+	dr := NewRule(NewMatchCondition("input"), "output")
 	ev := event.New("")
 	ev.SetInputHandlerName("input")
 	ev2 := event.New("")

@@ -13,6 +13,10 @@ type SimpleEvent struct {
 	message          string
 }
 
+func New(message string) *SimpleEvent {
+	return &SimpleEvent{message: message}
+}
+
 func (se *SimpleEvent) InputHandlerName() string {
 	return se.inputHandlerName
 }
@@ -24,8 +28,4 @@ func (se *SimpleEvent) EventMessage() string {
 func (se *SimpleEvent) SetInputHandlerName(inputHandlerName string) {
 	se.inputHandlerName = inputHandlerName
 	return
-}
-
-func New(message string) *SimpleEvent {
-	return &SimpleEvent{message: message}
 }

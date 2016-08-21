@@ -13,7 +13,7 @@ type Dispatcher struct {
 	rules          []*DispatchRule
 }
 
-func NewWithName(name string) *Dispatcher {
+func New(name string) *Dispatcher {
 	return &Dispatcher{name: name, inputHandlers: map[string]bool{}, outputHandlers: map[string]func(ev event.Event){}}
 }
 
@@ -63,11 +63,16 @@ func (d *Dispatcher) HasOutputHandler(name string) bool {
 	return exists
 }
 
-func (d *Dispatcher) AddDispatchRule(rule *DispatchRule) {
+func (d *Dispatcher) AddRule(rule *DispatchRule) {
 	d.rules = append(d.rules, rule)
 }
 
 func (d *Dispatcher) InputEvent(ev event.Event) {
+	//Check if input name is valid
+	if exists, _ := d.HasInputHandler(ev.InputHandlerName()); !exists {
+		panic("Message from unregistered input handler.")
+	}
+
 	for _, rule := range d.rules {
 		if rule.matchesEvent(ev) {
 			handlerFunc, ok := d.outputHandlers[rule.OutputHandlerName]
@@ -86,7 +91,7 @@ type MatchCondition struct {
 	InputHandlerName string
 }
 
-func NewMatchCondWithName(inputHandlerName string) MatchCondition {
+func NewMatchCondition(inputHandlerName string) MatchCondition {
 	return MatchCondition{InputHandlerName: inputHandlerName}
 }
 

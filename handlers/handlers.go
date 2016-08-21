@@ -14,7 +14,7 @@ type InputHandler interface {
 }
 
 //TODO: add type enumeration.
-func CreateInputHandler(name string) InputHandler {
+func NewInputHandler(name string) InputHandler {
 	return bih.New(nil, name)
 } //TODO: rename function.
 

@@ -8,7 +8,7 @@ import (
 )
 
 func ConstructLoggerFromConfig(config string) (inputHandlers map[string]handlers.InputHandler, disp *dispatcher.Dispatcher, outputHandlers map[string]handlers.OutputHandler) {
-	disp = dispatcher.NewWithName("")
+	disp = dispatcher.New("")
 	inputHandlers = map[string]handlers.InputHandler{}
 	outputHandlers = map[string]handlers.OutputHandler{}
 	var dat map[string]interface{}
@@ -34,7 +34,7 @@ func ConstructLoggerFromConfig(config string) (inputHandlers map[string]handlers
 		disp.AddInputHandler(stringName, true) //TODO: is on?
 
 		//creating handlers
-		handl := handlers.CreateInputHandler(stringName)
+		handl := handlers.NewInputHandler(stringName)
 		handl.SetDispatcher(disp)
 		if _, present := inputHandlers[stringName]; present {
 			panic("Attempt to ad duplicate input handlers.")
@@ -59,7 +59,7 @@ func ConstructLoggerFromConfig(config string) (inputHandlers map[string]handlers
 		dRule := dispRule.(map[string]interface{})
 		input := dRule["input"].(string)
 		output := dRule["output"].(string)
-		disp.AddDispatchRule(dispatcher.NewRule(dispatcher.NewMatchCondWithName(input), output))
+		disp.AddRule(dispatcher.NewRule(dispatcher.NewMatchCondition(input), output))
 	}
 
 	return inputHandlers, disp, outputHandlers
