@@ -7,8 +7,9 @@ import (
 	"testing"
 )
 
-var inpHandler deeplogger.InputHandler
-var inpHandlerToNowhere deeplogger.InputHandler
+//Start with blank input handlers to prevent accidental nil pointer dereference
+var inpHandler deeplogger.InputHandler = deeplogger.NewBlankInputHandler()
+var inpHandlerToNowhere deeplogger.InputHandler = deeplogger.NewBlankInputHandler()
 var disp *dispatcher.Dispatcher
 var outHandler deeplogger.OutputHandler
 

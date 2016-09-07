@@ -22,6 +22,11 @@ func NewInputHandler(name string) InputHandler {
 	return handlers.NewInputHandler(name)
 }
 
+//NewBlankInputHandler creates a dummy input handler, which prevents accidental nil pointer dereferencing.
+func NewBlankInputHandler() InputHandler {
+	return handlers.NewBlankInputHandler()
+}
+
 type OutputHandler interface {
 	handlers.OutputHandler
 }

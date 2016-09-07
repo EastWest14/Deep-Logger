@@ -19,6 +19,22 @@ func NewInputHandler(name string) InputHandler {
 	return bih.New(nil, name)
 }
 
+type BlankInputHandler struct{}
+
+//Panic
+func (blih *BlankInputHandler) SetDispatcher(*dispatcher.Dispatcher) {
+	panic("Attempting to set dispatcher on a blank Input Handler.")
+}
+
+//Do nothing
+func (blih *BlankInputHandler) LogEvent(event.Event) {
+	return
+}
+
+func NewBlankInputHandler() InputHandler {
+	return &BlankInputHandler{}
+}
+
 type OutputHandler interface {
 	TakeInEvent(event.Event)
 	SetOutputWriter(io.Writer)
