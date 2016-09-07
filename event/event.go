@@ -1,3 +1,4 @@
+//Event package is a lower level package used to construct event objects.
 package event
 
 import ()
