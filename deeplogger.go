@@ -1,3 +1,4 @@
+//Deeplogger is a package for logging, debugging and automated testing of concurrent systems.
 package deeplogger
 
 import (
@@ -6,6 +7,7 @@ import (
 	"log"
 )
 
+//ConstructLoggerFromConfig returns input handlers, dispatcher and output handlers that can be used to construct the deep logger system.
 func ConstructLoggerFromConfig(config string) (inputHandlers map[string]InputHandler, disp *dispatcher.Dispatcher, outputHandlers map[string]OutputHandler) {
 	disp = dispatcher.New("")
 	inputHandlers = map[string]InputHandler{}
@@ -64,10 +66,12 @@ func ConstructLoggerFromConfig(config string) (inputHandlers map[string]InputHan
 	return inputHandlers, disp, outputHandlers
 }
 
+//CountWriter is a mock object that implements io.Writer. Used to count number of calls to Write.
 type CountWriter struct {
 	V int
 }
 
+//Write increments internal counter by one.
 func (iw *CountWriter) Write(input []byte) (n int, err error) {
 	iw.V++
 	return 0, nil

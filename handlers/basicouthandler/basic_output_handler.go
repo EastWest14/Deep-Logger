@@ -5,6 +5,7 @@ import (
 	"deeplogger/event"
 	"fmt"
 	"io"
+	"os"
 )
 
 type BasicOutputHandler struct {
@@ -16,6 +17,8 @@ type BasicOutputHandler struct {
 func New(disp *dispatcher.Dispatcher, name string) *BasicOutputHandler {
 	boh := BasicOutputHandler{Dispatcher: disp, OutputHandlerName: name}
 	disp.AddOutputHandler(boh.OutputHandlerName, boh.TakeInEvent)
+	//By default writes to stdout
+	boh.SetOutputWriter(os.Stdout)
 	return &boh
 }
 
