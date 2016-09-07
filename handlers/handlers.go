@@ -14,9 +14,10 @@ type InputHandler interface {
 }
 
 //TODO: add type enumeration.
+
 func NewInputHandler(name string) InputHandler {
 	return bih.New(nil, name)
-} //TODO: rename function.
+}
 
 type OutputHandler interface {
 	TakeInEvent(event.Event)

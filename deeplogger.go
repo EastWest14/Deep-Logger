@@ -2,15 +2,14 @@ package deeplogger
 
 import (
 	dispatcher "deeplogger/dispatcher"
-	"deeplogger/handlers"
 	"encoding/json"
 	"log"
 )
 
-func ConstructLoggerFromConfig(config string) (inputHandlers map[string]handlers.InputHandler, disp *dispatcher.Dispatcher, outputHandlers map[string]handlers.OutputHandler) {
+func ConstructLoggerFromConfig(config string) (inputHandlers map[string]InputHandler, disp *dispatcher.Dispatcher, outputHandlers map[string]OutputHandler) {
 	disp = dispatcher.New("")
-	inputHandlers = map[string]handlers.InputHandler{}
-	outputHandlers = map[string]handlers.OutputHandler{}
+	inputHandlers = map[string]InputHandler{}
+	outputHandlers = map[string]OutputHandler{}
 	var dat map[string]interface{}
 	err := json.Unmarshal([]byte(config), &dat)
 	if err != nil {
@@ -34,7 +33,7 @@ func ConstructLoggerFromConfig(config string) (inputHandlers map[string]handlers
 		disp.AddInputHandler(stringName, true) //TODO: is on?
 
 		//creating handlers
-		handl := handlers.NewInputHandler(stringName)
+		handl := NewInputHandler(stringName)
 		handl.SetDispatcher(disp)
 		if _, present := inputHandlers[stringName]; present {
 			panic("Attempt to ad duplicate input handlers.")
@@ -46,7 +45,7 @@ func ConstructLoggerFromConfig(config string) (inputHandlers map[string]handlers
 	for _, outName := range outNames {
 		stringName := outName.(string)
 		//Creating handlers
-		handl := handlers.NewOutputHandler(disp, stringName)
+		handl := NewOutputHandler(disp, stringName)
 		if _, present := outputHandlers[stringName]; present {
 			panic("Attempt to ad duplicate output handlers.")
 		}

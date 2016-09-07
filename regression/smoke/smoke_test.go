@@ -3,16 +3,14 @@ package smoke_test
 import (
 	"deeplogger"
 	"deeplogger/dispatcher"
-	"deeplogger/event"
-	"deeplogger/handlers"
 	"os"
 	"testing"
 )
 
-var inpHandler handlers.InputHandler
-var inpHandlerToNowhere handlers.InputHandler
+var inpHandler deeplogger.InputHandler
+var inpHandlerToNowhere deeplogger.InputHandler
 var disp *dispatcher.Dispatcher
-var outHandler handlers.OutputHandler
+var outHandler deeplogger.OutputHandler
 
 var writeC writeCounter = writeCounter{0}
 
@@ -38,7 +36,7 @@ func setupWithConfigString() {
 	inpHandlers, d, outHandlers := deeplogger.ConstructLoggerFromConfig(config)
 	disp = d
 	inpHandler = inpHandlers["Input"]
-	inpHandlerToNowhere = handlers.NewInputHandler("Input2")
+	inpHandlerToNowhere = deeplogger.NewInputHandler("Input2")
 	inpHandlerToNowhere.SetDispatcher(disp)
 	outHandler = outHandlers["Output"]
 	outHandler.SetOutputWriter(&writeC)
@@ -48,11 +46,11 @@ func setupManual() {
 	disp = dispatcher.New("Dispatcher")
 	disp.AddInputHandler("Input", true)
 	disp.AddRule(dispatcher.NewRule(dispatcher.NewMatchCondition("Input"), "Output"))
-	inpHandler = handlers.NewInputHandler("Input")
+	inpHandler = deeplogger.NewInputHandler("Input")
 	inpHandler.SetDispatcher(disp)
-	inpHandlerToNowhere = handlers.NewInputHandler("Input2")
+	inpHandlerToNowhere = deeplogger.NewInputHandler("Input2")
 	inpHandlerToNowhere.SetDispatcher(disp)
-	outHandler = handlers.NewOutputHandler(disp, "Output")
+	outHandler = deeplogger.NewOutputHandler(disp, "Output")
 	outHandler.SetOutputWriter(&writeC)
 }
 
@@ -91,7 +89,7 @@ func TestLoggingEvents(t *testing.T) {
 	panicCount := 0
 	for _, aCase := range cases {
 		if aCase.inpHandlerCode == "Input" {
-			inpHandler.LogEvent(event.New(aCase.message))
+			inpHandler.LogEvent(deeplogger.NewEvent(aCase.message))
 		} else {
 			func() {
 				defer func() {
@@ -100,7 +98,7 @@ func TestLoggingEvents(t *testing.T) {
 
 					}
 				}()
-				inpHandlerToNowhere.LogEvent(event.New(aCase.message))
+				inpHandlerToNowhere.LogEvent(deeplogger.NewEvent(aCase.message))
 			}()
 		}
 	}
