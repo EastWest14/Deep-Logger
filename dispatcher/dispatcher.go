@@ -14,7 +14,7 @@ type Dispatcher struct {
 }
 
 func New(name string) *Dispatcher {
-	return &Dispatcher{name: name, inputHandlers: map[string]bool{}, outputHandlers: map[string]func(ev event.Event){}}
+	return &Dispatcher{name: name, on: true, inputHandlers: map[string]bool{}, outputHandlers: map[string]func(ev event.Event){}}
 }
 
 func (d *Dispatcher) Name() string {
@@ -68,6 +68,9 @@ func (d *Dispatcher) AddRule(rule *DispatchRule) {
 }
 
 func (d *Dispatcher) InputEvent(ev event.Event) {
+	if !d.on {
+		return
+	}
 	//Check if input name is valid
 	if exists, _ := d.HasInputHandler(ev.InputHandlerName()); !exists {
 		panic("Message from unregistered input handler.")

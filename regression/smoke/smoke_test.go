@@ -77,6 +77,9 @@ func TestName(t *testing.T) {
 }
 
 func TestLoggingEvents(t *testing.T) {
+	defer func() {
+		writeC.hitCounter = 0
+	}()
 	cases := []struct {
 		inpHandlerCode string
 		message        string
@@ -114,10 +117,12 @@ func TestLoggingEvents(t *testing.T) {
 	if writeC.hitCounter != expectedHitNum {
 		t.Errorf("Expected %d write hits, got %d hits.", expectedHitNum, writeC.hitCounter)
 	}
-	writeC.hitCounter = 0
 }
 
 func TestLoggingMessages(t *testing.T) {
+	defer func() {
+		writeC.hitCounter = 0
+	}()
 	cases := []struct {
 		inpHandlerCode string
 		message        string
@@ -134,5 +139,22 @@ func TestLoggingMessages(t *testing.T) {
 	if writeC.hitCounter != len(cases) {
 		t.Errorf("Expected %d write hits, got %d hits.", len(cases), writeC.hitCounter)
 	}
+}
+
+func TestIsOn(t *testing.T) {
+	defer func() {
+		writeC.hitCounter = 0
+		disp.TurnOn()
+	}()
+	inpHandler.LogMessage("")
+	if writeC.hitCounter != 1 {
+		t.Errorf("Expected write hit, got %d hits. Failure in state IsOn.", writeC.hitCounter)
+	}
 	writeC.hitCounter = 0
+
+	disp.TurnOff()
+	inpHandler.LogMessage("")
+	if writeC.hitCounter != 0 {
+		t.Errorf("Expected 0 write hits, got %d hits. Failure in state IsOff.", writeC.hitCounter)
+	}
 }

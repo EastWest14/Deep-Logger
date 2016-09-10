@@ -11,6 +11,9 @@ func TestNew(t *testing.T) {
 	if disp.name != name {
 		t.Errorf("Expected name %s, got %s", name, disp.name)
 	}
+	if disp.IsOn() != true {
+		t.Errorf("Expected dispatcher on, got off", name, disp.name)
+	}
 }
 
 func TestAddInputHandler(t *testing.T) {
