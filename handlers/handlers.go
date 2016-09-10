@@ -11,6 +11,7 @@ import (
 type InputHandler interface {
 	SetDispatcher(*dispatcher.Dispatcher)
 	LogEvent(event.Event)
+	LogMessage(string)
 }
 
 //TODO: add type enumeration.
@@ -28,6 +29,11 @@ func (blih *BlankInputHandler) SetDispatcher(*dispatcher.Dispatcher) {
 
 //Do nothing
 func (blih *BlankInputHandler) LogEvent(event.Event) {
+	return
+}
+
+//Do nothing
+func (bih *BlankInputHandler) LogMessage(message string) {
 	return
 }
 

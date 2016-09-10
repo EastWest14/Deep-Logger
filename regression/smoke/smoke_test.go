@@ -116,3 +116,23 @@ func TestLoggingEvents(t *testing.T) {
 	}
 	writeC.hitCounter = 0
 }
+
+func TestLoggingMessages(t *testing.T) {
+	cases := []struct {
+		inpHandlerCode string
+		message        string
+	}{
+		{"Input", ""},
+		{"Input", "Hello World!"},
+		{"Input", "Hello Again!"},
+	}
+
+	for _, aCase := range cases {
+		inpHandler.LogMessage(aCase.message)
+	}
+
+	if writeC.hitCounter != len(cases) {
+		t.Errorf("Expected %d write hits, got %d hits.", len(cases), writeC.hitCounter)
+	}
+	writeC.hitCounter = 0
+}

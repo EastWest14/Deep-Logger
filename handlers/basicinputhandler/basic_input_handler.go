@@ -26,3 +26,7 @@ func (bih *BasicInputHandler) LogEvent(ev event.Event) {
 	ev.SetInputHandlerName(bih.InputHandlerName)
 	bih.Dispatcher.InputEvent(ev)
 }
+
+func (bih *BasicInputHandler) LogMessage(message string) {
+	bih.LogEvent(event.New(message))
+}
