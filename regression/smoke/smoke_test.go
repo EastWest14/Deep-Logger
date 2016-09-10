@@ -34,7 +34,10 @@ const config = `{"dispatcher_name": "Dispatcher",
 }`
 
 func setupWithConfigString() {
-	inpHandlers, d, outHandlers := deeplogger.ConstructLoggerFromConfig(config)
+	inpHandlers, d, outHandlers, err := deeplogger.ConstructLoggerFromConfig(config)
+	if err != nil {
+		panic("Failed loading config. " + err.Error())
+	}
 	disp = d
 	inpHandler = inpHandlers["Input"]
 	inpHandlerToNowhere = deeplogger.NewInputHandler("Input2")

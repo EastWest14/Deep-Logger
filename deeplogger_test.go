@@ -15,7 +15,28 @@ const config = `{"dispatcher_name": "DISP1",
 }`
 
 func TestConstructLoggerFromConfig(t *testing.T) {
-	inpHandl, disp, outHandl := ConstructLoggerFromConfig(config)
+	//Failed cases
+	failConfigs := []string{"",
+		"---",
+		`{"a": "b"}`,
+		`{"dispatcher_name": "D"}`,
+		`{"dispatcher_name": "D", "isOn": false}`,
+		`{"dispatcher_name": "D", "isOn": false, "inputHandlers": ["i"]}`,
+		`{"dispatcher_name": "D", "isOn": false, "inputHandlers": ["i"], "outputHandlers": ["o"]}`,
+		`{"dispatcher_name": "D", "isOn": false, "inputHandlers": ["i"], "outputHandlers": ["o"], "dispatchRules": [{}, {}]}`,
+	}
+	for i, fConf := range failConfigs {
+		_, _, _, err := ConstructLoggerFromConfig(fConf)
+		if err == nil {
+			t.Errorf("In failed case %d expected error, but got no error.", i)
+		}
+	}
+
+	//Working case
+	inpHandl, disp, outHandl, err := ConstructLoggerFromConfig(config)
+	if err != nil {
+		t.Error("Failed to load config. Error: " + err.Error())
+	}
 	if disp.Name() != "DISP1" {
 		t.Error("Dispatcher name read incorrectly.")
 	}

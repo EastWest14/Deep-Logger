@@ -4,31 +4,43 @@ package deeplogger
 import (
 	dispatcher "deeplogger/dispatcher"
 	"encoding/json"
-	"log"
+	"errors"
 )
 
 //ConstructLoggerFromConfig returns input handlers, dispatcher and output handlers that can be used to construct the deep logger system.
-func ConstructLoggerFromConfig(config string) (inputHandlers map[string]InputHandler, disp *dispatcher.Dispatcher, outputHandlers map[string]OutputHandler) {
+func ConstructLoggerFromConfig(config string) (inputHandlers map[string]InputHandler, disp *dispatcher.Dispatcher, outputHandlers map[string]OutputHandler, err error) {
 	disp = dispatcher.New("")
 	inputHandlers = map[string]InputHandler{}
 	outputHandlers = map[string]OutputHandler{}
 	var dat map[string]interface{}
-	err := json.Unmarshal([]byte(config), &dat)
+	err = json.Unmarshal([]byte(config), &dat)
 	if err != nil {
-		log.Fatal(err.Error())
+		return nil, nil, nil, err
+	}
+	if dat == nil {
+		return inputHandlers, disp, outputHandlers, errors.New("Unmarshalled data is nil")
 	}
 
-	disp.SetName(dat["dispatcher_name"].(string))
+	dName, ok := dat["dispatcher_name"].(string)
+	if !ok {
+		return nil, nil, nil, errors.New("dispatcher_name not present")
+	}
+	disp.SetName(dName)
 
-	isOn := dat["isOn"].(bool)
+	isOn, ok := dat["isOn"].(bool)
+	if !ok {
+		return nil, nil, nil, errors.New("isOn not present")
+	}
 	if isOn {
 		disp.TurnOn()
 	} else {
 		disp.TurnOff()
 	}
 
-	var inNames []interface{}
-	inNames = dat["inputHandlers"].([]interface{})
+	inNames, ok := dat["inputHandlers"].([]interface{})
+	if !ok {
+		return nil, nil, nil, errors.New("inputHandlers not present")
+	}
 	for _, inName := range inNames {
 		//modifying dispatcher
 		stringName := inName.(string)
@@ -43,7 +55,10 @@ func ConstructLoggerFromConfig(config string) (inputHandlers map[string]InputHan
 		inputHandlers[stringName] = handl
 	}
 
-	outNames := dat["outputHandlers"].([]interface{})
+	outNames, ok := dat["outputHandlers"].([]interface{})
+	if !ok {
+		return nil, nil, nil, errors.New("outputHandlers not present.")
+	}
 	for _, outName := range outNames {
 		stringName := outName.(string)
 		//Creating handlers
@@ -54,17 +69,29 @@ func ConstructLoggerFromConfig(config string) (inputHandlers map[string]InputHan
 		outputHandlers[stringName] = handl
 	}
 
-	//TODO: find a way to automatically test
-	dispatchRulesData := dat["dispatchRules"].([]interface{})
+	dispatchRulesData, ok := dat["dispatchRules"].([]interface{})
+	if !ok {
+		return nil, nil, nil, errors.New("dispatcherRules not found.")
+	}
 	for _, dispRule := range dispatchRulesData {
 		dRule := dispRule.(map[string]interface{})
-		input := dRule["input"].(string)
-		output := dRule["output"].(string)
+		input, ok := dRule["input"].(string)
+		if !ok {
+			return nil, nil, nil, errors.New("Invalid dispatcher rules.")
+		}
+		output, ok := dRule["output"].(string)
+		if !ok {
+			return nil, nil, nil, errors.New("Invalid dispatcher rules.")
+		}
 		disp.AddRule(dispatcher.NewRule(dispatcher.NewMatchCondition(input), output))
 	}
 
-	return inputHandlers, disp, outputHandlers
+	return inputHandlers, disp, outputHandlers, nil
 }
+
+//TODO: unparse input handlers should be a separate function with tests.
+//TODO: unparse output handlers should be a separate function with tests.
+//TODO: unparse dispatcher rules should be a separate function with tests.
 
 //CountWriter is a mock object that implements io.Writer. Used to count number of calls to Write.
 type CountWriter struct {
