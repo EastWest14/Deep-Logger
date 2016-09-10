@@ -3,7 +3,10 @@ package smoke_test
 import (
 	"deeplogger"
 	"deeplogger/dispatcher"
+	"fmt"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -34,7 +37,18 @@ const config = `{"dispatcher_name": "Dispatcher",
 }`
 
 func setupWithConfigString() {
-	inpHandlers, d, outHandlers, err := deeplogger.ConstructLoggerFromConfig(config)
+	tDir, err := ioutil.TempDir("", "test")
+	if err != nil {
+		panic(fmt.Sprintf("Failed creating temp directory: %s", err.Error()))
+	}
+	tFile := filepath.Join(tDir, "test_file_to_load")
+	err = ioutil.WriteFile(tFile, []byte(config), 0666)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to write temporary file: %s", err.Error()))
+	}
+	defer os.RemoveAll(tDir)
+
+	inpHandlers, d, outHandlers, err := deeplogger.ConstructLoggerFromFilepath(tFile)
 	if err != nil {
 		panic("Failed loading config. " + err.Error())
 	}

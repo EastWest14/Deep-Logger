@@ -5,6 +5,8 @@ import (
 	dispatcher "deeplogger/dispatcher"
 	"encoding/json"
 	"errors"
+	"io/ioutil"
+	"os"
 )
 
 //ConstructLoggerFromConfig returns input handlers, dispatcher and output handlers that can be used to construct the deep logger system.
@@ -92,6 +94,26 @@ func ConstructLoggerFromConfig(config string) (inputHandlers map[string]InputHan
 //TODO: unparse input handlers should be a separate function with tests.
 //TODO: unparse output handlers should be a separate function with tests.
 //TODO: unparse dispatcher rules should be a separate function with tests.
+
+func ConstructLoggerFromFilepath(filepath string) (inputHandlers map[string]InputHandler, disp *dispatcher.Dispatcher, outputHandlers map[string]OutputHandler, err error) {
+	content, err := loadFileToString(filepath)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	return ConstructLoggerFromConfig(content)
+}
+
+func loadFileToString(filepath string) (string, error) {
+	file, err := os.Open(filepath)
+	if err != nil {
+		return "", errors.New("Failed opening file: " + err.Error())
+	}
+	content, err := ioutil.ReadAll(file)
+	if err != nil {
+		return "", errors.New("Failed reading file: " + err.Error())
+	}
+	return string(content), nil
+}
 
 //CountWriter is a mock object that implements io.Writer. Used to count number of calls to Write.
 type CountWriter struct {
