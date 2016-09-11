@@ -12,9 +12,11 @@ import (
 
 //Start with blank input handlers to prevent accidental nil pointer dereference
 var inpHandler deeplogger.InputHandler = deeplogger.NewBlankInputHandler()
+var inpHandler2 deeplogger.InputHandler = deeplogger.NewBlankInputHandler()
 var inpHandlerToNowhere deeplogger.InputHandler = deeplogger.NewBlankInputHandler()
 var disp *dispatcher.Dispatcher
 var outHandler deeplogger.OutputHandler
+var outHandler2 deeplogger.OutputHandler
 
 var writeC writeCounter = writeCounter{0}
 
@@ -27,16 +29,19 @@ func (wc *writeCounter) Write(input []byte) (n int, err error) {
 	return 0, nil
 }
 
+//Nothing is routed to Output2
 const config = `{"dispatcher_name": "Dispatcher",
 	"isOn": true,
-	"inputHandlers": ["Input"],
-	"outputHandlers": ["Output"],
+	"inputHandlers": ["Input", "Input2"],
+	"outputHandlers": ["Output", "Output2"],
 	"dispatchRules": [
-		{"input":"Input", "output": "Output"}
+		{"input":"Input", "output": "Output"},
+		{"input":"Input2", "output": "Output"}
 	]
 }`
 
 func setupWithConfigString() {
+	//Setup file to read config from
 	tDir, err := ioutil.TempDir("", "test")
 	if err != nil {
 		panic(fmt.Sprintf("Failed creating temp directory: %s", err.Error()))
@@ -54,7 +59,8 @@ func setupWithConfigString() {
 	}
 	disp = d
 	inpHandler = inpHandlers["Input"]
-	inpHandlerToNowhere = deeplogger.NewInputHandler("Input2")
+	inpHandler2 = inpHandlers["Input2"]
+	inpHandlerToNowhere = deeplogger.NewInputHandler("Input_To_Nowhere")
 	inpHandlerToNowhere.SetDispatcher(disp)
 	outHandler = outHandlers["Output"]
 	outHandler.SetOutputWriter(&writeC)
@@ -63,12 +69,17 @@ func setupWithConfigString() {
 func setupManual() {
 	disp = dispatcher.New("Dispatcher")
 	disp.AddInputHandler("Input", true)
+	disp.AddInputHandler("Input2", true)
 	disp.AddRule(dispatcher.NewRule(dispatcher.NewMatchCondition("Input"), "Output"))
+	disp.AddRule(dispatcher.NewRule(dispatcher.NewMatchCondition("Input2"), "Output"))
 	inpHandler = deeplogger.NewInputHandler("Input")
+	inpHandler2 = deeplogger.NewInputHandler("Input2")
 	inpHandler.SetDispatcher(disp)
-	inpHandlerToNowhere = deeplogger.NewInputHandler("Input2")
+	inpHandler2.SetDispatcher(disp)
+	inpHandlerToNowhere = deeplogger.NewInputHandler("Input_To_Nowhere")
 	inpHandlerToNowhere.SetDispatcher(disp)
 	outHandler = deeplogger.NewOutputHandler(disp, "Output")
+	outHandler2 = deeplogger.NewOutputHandler(disp, "Output2")
 	outHandler.SetOutputWriter(&writeC)
 }
 
@@ -104,7 +115,7 @@ func TestLoggingEvents(t *testing.T) {
 		{"Input", ""},
 		{"Input", "Hello World!"},
 		{"Input", "Hello Again!"},
-		{"Input2", "Miss!"},
+		{"Input_To_Nowhere", "Miss!"},
 	}
 
 	panicCount := 0
@@ -151,6 +162,28 @@ func TestLoggingMessages(t *testing.T) {
 
 	for _, aCase := range cases {
 		inpHandler.LogMessage(aCase.message)
+	}
+
+	if writeC.hitCounter != len(cases) {
+		t.Errorf("Expected %d write hits, got %d hits.", len(cases), writeC.hitCounter)
+	}
+}
+
+func TestLoggingMessagesTwoInputs(t *testing.T) {
+	defer func() {
+		writeC.hitCounter = 0
+	}()
+	cases := []struct {
+		inpHandler deeplogger.InputHandler
+		message    string
+	}{
+		{inpHandler, ""},
+		{inpHandler, "Hello World!"},
+		{inpHandler2, "Hello Again!"},
+	}
+
+	for _, aCase := range cases {
+		aCase.inpHandler.LogMessage(aCase.message)
 	}
 
 	if writeC.hitCounter != len(cases) {
