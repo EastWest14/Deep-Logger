@@ -95,6 +95,7 @@ func ConstructLoggerFromConfig(config string) (inputHandlers map[string]InputHan
 //TODO: unparse output handlers should be a separate function with tests.
 //TODO: unparse dispatcher rules should be a separate function with tests.
 
+//Construct Lgger from filepath returns joined components of the Deep Logger system. Implicitly calls ConstructLoggerFromConfig.
 func ConstructLoggerFromFilepath(filepath string) (inputHandlers map[string]InputHandler, disp *dispatcher.Dispatcher, outputHandlers map[string]OutputHandler, err error) {
 	content, err := loadFileToString(filepath)
 	if err != nil {

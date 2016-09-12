@@ -1,3 +1,4 @@
+//Dispatcher routes events from input handlers to output handlers and is the core of the Deep Logger system.
 package dispatcher
 
 import (
