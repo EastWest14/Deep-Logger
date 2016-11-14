@@ -1,4 +1,4 @@
-//Deeplogger is a package for logging, debugging and automated testing of concurrent systems.
+//Deeplogger is a package for logging and debugging of concurrent systems.
 package deeplogger
 
 import (
